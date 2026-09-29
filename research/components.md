@@ -101,23 +101,48 @@ about 20–30 A is realistic. The duty is short boosts and braking events, so th
 150 A peak governs. The DRV8302 gate driver is this generation's usual failure
 point.
 
-**Regen in the VESC firmware.** A negative `SET_CURRENT` gives braking torque at
-any positive speed. All controlled braking is regenerative: there is no
-dissipative braking mode while moving (`COMM_SET_CURRENT_BRAKE` is also
-regenerative; phase shorting works only at standstill). Two separate limits
-apply:
+**How the VESC regenerates** (from the firmware source, vedderb/bldc 6.06:
+`motor/mcpwm_foc.c`, `motor/mc_interface.c`, `comm/timeout.c`).
 
-| Setting | Limits |
+- **Charging.** There is no separate boost mode. The FOC current loop settles at
+  `vq ≈ λ·ω_e − R·|iq|`, so the bridge and the phase inductance act as a
+  synchronous boost converter: the bank charges at any voltage above the
+  motor's back-EMF, with no minimum speed.
+- **Direction.** `SET_CURRENT` is signed torque. A negative current brakes a
+  forward-turning rotor, but at or near standstill it drives the rotor
+  backward. `SET_CURRENT_BRAKE` always opposes the rotation, is capped at Motor
+  Current Max Brake, shorts the phases through the FETs near zero speed, and
+  never motors.
+- **Release.** Any command below `cc_min_current` (0.05 A), including 0 A, stops
+  switching within about 1 ms: all six FETs off. The UART timeout and every
+  fault do the same. The phases are never shorted unless
+  `foc_short_ls_on_zero_duty` is set (off by default).
+- **Limits**, computed at 1 kHz from the filtered input voltage:
+
+| Setting | Acts on |
 |---|---|
-| Motor Current Max Brake | Phase current during braking, i.e. torque |
-| Battery Current Max Regen | Current into the bank |
+| Motor Current Max Brake | Regen phase current (torque); derated only by temperature |
+| Battery Current Max Regen | Charge current, converted to phase current as `I_bus ≈ mod_q·iq`. Next to a ±40 A motor limit it never binds |
+| Battery regen cut start / end | Since 6.05. Tapers the charge-current limit to 0 between the two voltages. Default 1000 / 1100 V, i.e. off |
+| Max input voltage | Not a limit but a fault: sustained excess raises fault 1 (over-voltage) |
+| Battery cut start / end | Tapers assist only; regen is unaffected |
 
-Bank current is a fraction of motor current set by the duty cycle, so low speed
-gives strong braking torque with a modest charge current. v1's ride logs (in
-the archived repository) show regen commands reaching 40 A on this board, with
-the measured motor current following.
+- **Faults.** On any fault the VESC stops switching, ignores commands for
+  500 ms (re-armed if the fault recurs), then clears it by itself; the next
+  command restarts the motor. Codes: 1 over-voltage, 2 under-voltage,
+  3 gate driver, 4 absolute over-current (130 A default), 5 FET
+  over-temperature, 6 motor over-temperature, 7–8 gate-driver supply,
+  9 MCU under-voltage, 10 watchdog reset.
+- **Telemetry.** `current_motor` is the average since the last read of the
+  total dq current magnitude, signed by power flow (negative in regen), and 0
+  while released. `current_in` is estimated (this board has no DC current
+  sensor), negative while charging. `rpm` is electrical RPM. `v_in` is
+  low-pass filtered. Any other reader, such as VESC Tool, resets the averages.
+- v1's ride logs (in the archived repository) show regen reaching 40 A on this
+  board.
 
-**Power peak at low speed.** In the VESC's FOC model, regen current I takes
+**Power peak at low speed.** In the VESC's FOC model (amplitude-invariant, R per
+phase, `P = 1.5·(vd·id + vq·iq)`), regen current I takes
 `1.5·λ·ω_e·I` from the shaft and loses `1.5·R·I²` in the windings (λ = flux
 linkage, ω_e = electrical speed, R = phase resistance), so the bank receives
 `1.5·I·(λ·ω_e − R·I)`. That peaks at `I = λ·ω_e/(2R)` and reaches zero at
@@ -134,17 +159,28 @@ G020 constants above (λ = 0.0162 Wb, R = 0.25 Ω, 10 pole pairs, k = 5):
 The firmware caps regen so at least 30 % of the braking energy reaches the bank
 (RGX-2-003 §3, yield limit).
 
-**Uncontrolled regen above the bank voltage.** When the line-to-line back-EMF
-exceeds the bank voltage, current flows through the MOSFET body diodes whatever
-the controller commands. With kV ≈ 6.8 wheel-rpm/V the crossover is about
-10.9 km/h at the 12.7 V resting bank, 34 km/h at 40 V and 39 km/h at the 45.4 V
-absolute ceiling (spec §9 bank-overvoltage caveat, §11 item 2). Braking at speed
-from a resting bank therefore starts in this region; it is self-limiting,
-because the diode current charges the bank toward the back-EMF.
+**Above the bank voltage.** The bridge can oppose at most about
+`0.95·Vbus/√3` of peak phase back-EMF (`l_max_duty` 0.95). Beyond that:
 
-**FOC settings from a generator application.** "Sample in V0 and V7" stabilised
-current measurements, and a lower observer gain improved stability
-(RGX-2-003 §11 item 13).
+- **While switching,** the current loop saturates and the rotor brakes harder
+  than commanded, at roughly `(vq_max − λ·ω_e)/R`; a smaller command cannot
+  reduce it.
+- **With the bridge off** (0 A, timeout, fault), the body diodes rectify
+  whenever the line-to-line back-EMF `√3·λ·ω_e` exceeds the bank voltage. The
+  firmware's own comment: the diodes "can see a lot of current and unexpected
+  braking happens".
+- **Field weakening** (`foc_fw_current_max`, 0 = off by default) injects
+  negative d-axis current above about 85 % duty, in regen as well as assist,
+  which lowers the voltage needed and can keep control above the crossover if
+  the configured current is large enough. The firmware does not check that it
+  is.
+
+With kV ≈ 6.8 wheel-rpm/V the diode crossover is about 10.9 km/h at the 12.7 V
+resting bank, 34 km/h at 40 V and 39 km/h at the 45.4 V absolute ceiling; the
+switching limit is about 5 % lower (spec §9 bank-overvoltage caveat, §11
+item 2). These only occur with the carrier held, since a freewheeling carrier
+leaves the rotor still. Telemetry mask bit 6 (duty) reaches 0.95 at the
+switching limit.
 
 ---
 
@@ -155,4 +191,6 @@ current measurements, and a lower observer gain improved stability
 - G020 kV and phase resistance (spec §11 item 2): they fix the crossover speed
   and the power-peak currents above.
 - Whether the VESC's hall detection maps the G020's halls without a custom table.
-- Regen into a capacitor bank: every vendor assumes a battery.
+- Regen into a capacitor bank on real hardware: the firmware has no
+  battery-specific logic beyond the voltage and current limits above, but it is
+  untested.

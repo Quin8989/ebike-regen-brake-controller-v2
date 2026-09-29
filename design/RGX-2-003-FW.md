@@ -84,7 +84,9 @@ clamp only shrinks the current and never flips its sign.
 
 **Sign convention.** The VESC's motor direction is set so +current drives the
 wheel forward (§11 item 4). ERPM is then ≥ 0 whenever torque
-flows: + amps = assist, − amps = regen.
+flows: + amps = assist, − amps = regen. `SET_CURRENT` is signed torque, so a
+negative command near standstill would drive the rotor backward; the yield cap
+falls to 0 with ERPM, and no regen is commanded below `W_MIN_RPM`.
 
 **Latency.** Slip onset is seen one to two wheel-sensor pulses late (63–126 ms
 at 20 km/h); regen then builds at `SLEW_STEP_A` per tick (0.2 s to 40 A).
@@ -98,8 +100,16 @@ voltage, fault code). The 27-byte reply is read at the start of the next tick.
 Wire use: about 17 % of transmit and 23 % of receive capacity.
 
 **Timeouts.** The current command is also the keepalive. The VESC's UART app
-timeout (200 ms, brake current 0; §11 item 6) releases the motor if commands stop. On the
-Pico side, 25 ticks (250 ms) without a clean reply clears the run flag.
+timeout (200 ms, brake current 0; §11 item 6) releases the motor if commands
+stop. On the Pico side, 25 ticks (250 ms) without a clean reply clears the run
+flag.
+
+**Zero current releases the motor.** The VESC treats any command below 0.05 A,
+including the 0 A sent whenever the run flag is clear or no current is
+requested, as a release: it stops switching within about 1 ms and all six FETs
+are off. It resumes with the next non-zero command. With the bridge off, the
+FET body diodes still rectify if the motor's back-EMF exceeds the bank voltage
+(`research/components.md` §2).
 
 **Parser.** Accepts only the one reply: start byte 2, length 22, command 50,
 CRC16-XMODEM, end byte 3. Anything else is skipped a byte at a time; a
@@ -195,12 +205,14 @@ runtime.
 | 10 | Min input voltage | 8 V, or the measured start-up voltage (spec §11 item 3) | |
 | 11 | Battery cut start / end | 10 V / 9 V | Backstop for the firmware's assist floor (`V_TERM_MIN` = 9 V) |
 | 12 | Motor temperature sensing | Off (J2 pin 6 unconnected) | Spec §10 item 5 |
-| 13 | FOC | "Sample in V0 and V7" on | `research/components.md` §2 |
+| 13 | Field weakening | Off (`foc_fw_current_max` 0, the default) | Above the back-EMF crossover, regen current is not controlled (`research/components.md` §2) |
+| 14 | Battery regen cut start / end | Off (1000 / 1100 V, the default) | Regen runs up to the 40 V over-voltage fault; the firmware's own clamp holds 39 V (§3) |
 
 Settings take effect after writing them and power-cycling the VESC.
 
 ## Sources
 
+- [VESC firmware source, release 6.06](https://github.com/vedderb/bldc/tree/release_6_06): `motor/mcpwm_foc.c`, `motor/mc_interface.c`, `comm/commands.c`, `comm/timeout.c`
 - [VESC UART protocol](https://vedderb-bldc.mintlify.app/communication/uart-protocol)
 - [VESC firmware changelog](https://github.com/vedderb/bldc/blob/master/CHANGELOG.md)
 - [MicroPython for the Raspberry Pi Pico](https://micropython.org/download/RPI_PICO/)

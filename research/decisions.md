@@ -41,6 +41,26 @@ points to a ground offset, not timing).
 
 ---
 
+## 2026-09-29 — VESC behaviour read from its source
+
+**Decided.** The VESC's behaviour is taken from its firmware source (vedderb/bldc
+release 6.06, the owned unit's version), not from general inverter knowledge or
+forum reports. Findings now in `components.md` §2 and RGX-2-003 §3, §4 and §11:
+regen charges the bank through the FOC current loop acting as a synchronous
+boost converter (no minimum speed); any command under 0.05 A, including 0 A,
+releases the motor (all FETs off within ~1 ms), as do the UART timeout and
+every fault; above the back-EMF crossover a switching VESC loses control of
+regen current (it saturates and over-brakes) and a released one rectifies
+through its body diodes; field weakening, off by default, applies in regen
+too; the 40 V maximum input voltage is a fault (500 ms stop, auto-clear), and
+a separate soft regen cut exists but is off by default; `SET_CURRENT` is
+signed torque and drives backward near standstill, while `SET_CURRENT_BRAKE`
+never motors. The efficiency relation behind the yield limit,
+`1 − R·I/(λ·ω_e)` with R per phase, matches the VESC's own motor model.
+Setting 13 ("Sample in V0 and V7") is dropped: it has no effect on HW 410.
+
+---
+
 ## 2026-09-29 — G020 constants from published data; crossover corrected
 
 **Decided.** Until the bench measures them, the firmware uses constants derived
