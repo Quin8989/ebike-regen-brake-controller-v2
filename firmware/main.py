@@ -44,7 +44,7 @@ def run():
             due = time.ticks_ms()
 
 
-# tools/deploy.sh drops /nomain so a redeploy is not racing the WDT. Returning
+# deploy.sh drops /nomain so a redeploy is not racing the WDT. Returning
 # (not SystemExit, which soft-reboots into main.py again) leaves the REPL.
 if "nomain" not in os.listdir("/"):
     run()

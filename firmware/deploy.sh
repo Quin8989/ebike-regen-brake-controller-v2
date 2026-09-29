@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# Copy the v2 firmware to the Pico:  tools/deploy.sh [port]   (default: auto)
+# Copy the firmware to the Pico:  firmware/deploy.sh [port]   (default: auto)
 #
 # main.py arms a 2 s watchdog, so a plain `mpremote cp` races a reboot.
 # Drop a 'nomain' flag first (main.py exits at boot while it exists), copy,
 # then remove the flag and reset.
 set -euo pipefail
-cd "$(dirname "$0")/../firmware"
+cd "$(dirname "$0")"
 mp() { mpremote connect "${1:-auto}" "${@:2}"; }
 PORT="${1:-auto}"
 

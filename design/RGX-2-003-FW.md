@@ -22,10 +22,11 @@ is logged and nothing is written to flash.
 | `sensors.py` | 126 | Wheel speed (PIO) and throttle (ADC) |
 | `ui.py` | 90 | Display on core 1 |
 | `main.py` | 50 | Wiring, core-1 launch, fixed-rate loop, watchdog |
+| `deploy.sh` | 19 | Copies the firmware to the Pico with `mpremote` |
 
 ## 2. Platform
 
-Raspberry Pi Pico (RP2040), **MicroPython v1.29.0**, pinned (`tools/deploy.sh`
+Raspberry Pi Pico (RP2040), **MicroPython v1.29.0**, pinned (`firmware/deploy.sh`
 warns on any other version; CI compiles against the same release). Core 0 runs
 only control; core 1 runs only the display, so display I/O cannot delay the
 VESC link. MicroPython's RP2040 threads run without a global lock, so both
@@ -55,7 +56,8 @@ Regen grows while the carrier is held (s < 0.12) until it just slips, so the
 braking torque follows the lever; with the carrier released (s → 1) regen falls
 to 0. The velocity form works from the current actually sent, so nothing winds
 up while the envelope clamps. Below `W_MIN_RPM`, e is at its minimum and regen
-can only fall.
+can only fall. The regen ceiling is fixed; it does not scale with speed
+(`research/components.md` §2, power peak at low speed).
 
 **Envelope** (`envelope()`). Current builds by at most `SLEW_STEP_A` (2 A) per
 tick; any reduction, including a reversal, is immediate. The result is clamped
@@ -64,7 +66,7 @@ so the VESC's terminal voltage stays within [`V_TERM_MIN`, `V_TERM_MAX`] =
 clamp only shrinks the current and never flips its sign.
 
 **Sign convention.** The VESC's motor direction is set so +current drives the
-wheel forward (`tools/A1-SETUP.md` item 4). ERPM is then ≥ 0 whenever torque
+wheel forward (§11 item 4). ERPM is then ≥ 0 whenever torque
 flows: + amps = assist, − amps = regen.
 
 **Latency.** Slip onset is seen one to two wheel-sensor pulses late (63–126 ms
@@ -79,7 +81,7 @@ voltage, fault code). The 27-byte reply is read at the start of the next tick.
 Wire use: about 17 % of transmit and 23 % of receive capacity.
 
 **Timeouts.** The current command is also the keepalive. The VESC's UART app
-timeout (200 ms, brake current 0) releases the motor if commands stop. On the
+timeout (200 ms, brake current 0; §11 item 6) releases the motor if commands stop. On the
 Pico side, 25 ticks (250 ms) without a clean reply clears the run flag.
 
 **Parser.** Accepts only the one reply: start byte 2, length 22, command 50,
@@ -124,7 +126,7 @@ Fixed rate on `ticks_ms`: a late tick is counted and the schedule realigned,
 never run twice in a row. `gc.collect()` runs every 10 ticks. A 2 s watchdog is
 armed after start-up. If the script stops before that, the Pico sits at the
 REPL and the VESC's 200 ms timeout releases the motor. A file `/nomain` on the
-Pico skips `run()` at boot; `tools/deploy.sh` uses it to copy files past the
+Pico skips `run()` at boot; `firmware/deploy.sh` uses it to copy files past the
 watchdog.
 
 ## 8. Constants
@@ -155,6 +157,29 @@ faults). The parser is tested against every single-bit error in a reply and
 - Link integrity under motor current steps with the Rev F grounding
   (`BAD FRAMES`).
 - Every `[BENCH]` value, and the regen behaviour, which needs the carrier brake.
+
+## 11. VESC settings
+
+The firmware assumes these settings in VESC Tool and checks none of them at
+runtime.
+
+| # | Setting | Value | Reason |
+|---|---|---|---|
+| 1 | Firmware | As installed: 6.6 on the owned unit (HW 410) | The telemetry used exists in every VESC firmware since 3.41 |
+| 2 | LispBM | No script running | The v1 script on the owned unit pushes 100 Hz custom frames, about 19 % of the link |
+| 3 | Motor detection | FOC, sensored (halls H1–H3) | Spec §7 |
+| 4 | Motor direction | *Invert Motor Direction* set so +2 A (Current test) turns the wheel forward with the carrier on its clutch; spinning the wheel forward with the carrier held reads ERPM > 0 | The firmware's only sign convention (§3); it has no direction setting |
+| 5 | App | UART, 115200 baud | §4 |
+| 6 | App timeout | 200 ms, timeout brake current 0 A | A dead Pico or cut wire releases the motor within 0.2 s (§4) |
+| 7 | Motor current max / min | +40 A / −40 A | Matches `I_ASSIST_MAX` / `I_REGEN_MAX` |
+| 8 | Battery current max / min | +40 A / −40 A | Spec §10 item 4; the regen (min) side set explicitly |
+| 9 | Max input voltage | 40 V | Spec §10 item 5a; the firmware holds the terminal at or below `V_TERM_MAX` = 39 V |
+| 10 | Min input voltage | 8 V, or the measured start-up voltage (spec §11 item 3) | |
+| 11 | Battery cut start / end | 10 V / 9 V | Backstop for the firmware's assist floor (`V_TERM_MIN` = 9 V) |
+| 12 | Motor temperature sensing | Off (J2 pin 6 unconnected) | Spec §10 item 5 |
+| 13 | FOC | "Sample in V0 and V7" on | `research/components.md` §2 |
+
+Settings take effect after writing them and power-cycling the VESC.
 
 ## Sources
 

@@ -21,15 +21,14 @@ the regen current through a VESC motor controller.
 | Path | |
 |---|---|
 | `design/` | **Authoritative.** Spec RGX-2-001, drawing RGX-2-100 (HTML), BOM RGX-2-002 (parts, sources, inspection checks), firmware architecture RGX-2-003, planetary simulator (HTML) |
-| `firmware/` | MicroPython for the Pico, six files |
+| `firmware/` | MicroPython for the Pico (six files) and `deploy.sh`, which copies them to it |
 | `tests/` | Host tests, run through a model of the hub and the VESC |
-| `tools/` | `deploy.sh` (copy firmware to the Pico), `A1-SETUP.md` (VESC settings) |
-| `research/` | Decision log and the studies behind the design; `design/` wins where they differ |
+| `research/` | Decision log, component selection, carrier-brake study; `design/` wins where they differ |
 
 ```
 pip install -r requirements-dev.txt
 python -m pytest        # host tests
-tools/deploy.sh         # to a Pico running MicroPython v1.29.0
+firmware/deploy.sh      # to a Pico running MicroPython v1.29.0
 ```
 
 Designators: **A1** VESC (Flipsky Mini FSESC4.20) · **U2** Pico · **M1** motor ·
@@ -48,7 +47,12 @@ T_sun : T_ring : T_carrier = 1 : k : −(1+k)
 ```
 
 With the carrier held, sun and ring counter-rotate; the VESC is configured so
-this reads as positive ERPM (`A1-SETUP.md` item 4). If the sun carries no
+this reads as positive ERPM (RGX-2-003 §11 item 4). If the sun carries no
 torque, nothing does: the carrier brake works only while the motor
 regenerates. Carrier slip equals the fraction of braking power lost as heat in
 the carrier brake.
+
+Drawing: ASME Y14.44 designators and Y14.100 title blocks; IEEE 315
+semiconductor symbols, IEC-style resistors and fuses. Zone grid A–D / 1–4,
+origin top-left. Dots mark junctions; crossings without dots are not
+connected. Flags refer to the notes block on their own sheet.

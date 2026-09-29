@@ -29,7 +29,7 @@ LINK_TIMEOUT_TICKS = const(25)    # 250 ms without a clean reply -> 0 A
 LINK_RECOVER_FRAMES = const(10)   # clean frames in a row before current flows
 
 # --- Mechanics ---------------------------------------------------------------
-# Sign convention, fixed by provisioning (tools/A1-SETUP.md): A1's motor
+# Sign convention, fixed by provisioning (RGX-2-003 §11 item 4): A1's motor
 # direction is set so +current drives the wheel forward. With the carrier held
 # (clutch in assist, brake in regen) the rotor then turns at +k x wheel, so
 # ERPM >= 0 whenever torque flows, +amps motor and -amps generate. There is no
@@ -48,7 +48,7 @@ W_MIN_RPM = 24.0              # ~3 km/h: slip undefined and no regen below this
 # current is driven until the carrier just slips at SLIP_SET, so braking
 # follows the lever and (1 - SLIP_SET) of it is harvested.
 SLIP_SET = 0.12               # [BENCH] allowed slip = pad-loss fraction. 6 PPR
-                              # staleness needs >= 0.10-0.15 (motor-selection §4)
+                              # staleness needs >= 0.10-0.15 (research/components.md §1)
 SLIP_KP = 100.0               # [BENCH] A per unit slip error. The carrier is an
 SLIP_KI = 300.0               # [BENCH] A/s per unit   integrating plant, so I-only
                               # control limit-cycles; these settle with <= 60 ms of
