@@ -165,9 +165,10 @@ The firmware caps regen so at least 30 % of the braking energy reaches the bank
 **Above the bank voltage.** The bridge can oppose at most about
 `0.95·Vbus/√3` of peak phase back-EMF (`l_max_duty` 0.95). Beyond that:
 
-- **While switching,** the current loop saturates and the rotor brakes harder
-  than commanded, at roughly `(vq_max − λ·ω_e)/R`; a smaller command cannot
-  reduce it.
+- **While switching,** the current loop saturates. The d axis has priority
+  (`mcpwm_foc.c` 4591–4609), so the whole voltage goes to holding `id` and `vq`
+  falls to 0. The current is then set by the back-EMF, the phase inductance and
+  the bank voltage, not by the command; a smaller command cannot reduce it.
 - **With the bridge off** (0 A, timeout, fault), the body diodes rectify
   whenever the line-to-line back-EMF `√3·λ·ω_e` exceeds the bank voltage. The
   firmware's own comment: the diodes "can see a lot of current and unexpected
@@ -185,6 +186,49 @@ item 2). These only occur with the carrier held, since a freewheeling carrier
 leaves the rotor still. Telemetry mask bit 6 (duty) reaches 0.95 at the
 switching limit.
 
+**Worst case: 35 km/h, low bank, carrier held at 0 slip.** Slip reads 0, so
+the firmware ramps to its 40 A cap and A1 keeps switching, saturated. Simulated
+with the VESC 6.06 current loop as written (PI gains as FOC detection sets them
+with its 1000 µs time constant, d axis first, no decoupling, `l_max_duty` 0.95),
+a dq model of the G020 with the constants above, 100 kg of rider and bike, a
+2.08 m wheel and the 6.67 F bank behind 0.18–0.367 Ω. Phase inductance is
+unmeasured, so it is swept; each row covers a bank of 9–12.7 V and both
+resistances:
+
+| Phase inductance | Peak current | Peak wheel torque | Saturated for | Control returns at | Into windings | Into bank | In bank resistance |
+|---|---|---|---|---|---|---|---|
+| 25–50 µH | 64–75 A | 77–91 N·m | 0.2–0.8 s | 27–31 km/h | 0.4–1.0 kJ (44–56 %) | 26–36 % | 14–28 % |
+| 100 µH | 52–87 A | 60–104 N·m | 0.3–1.3 s | 20–31 km/h | 0.5–2.9 kJ (46–92 %) | 5–31 % | 2–23 % |
+| 150–200 µH | 67–79 A | 71–92 N·m | 1.5–2.3 s | 16–20 km/h | 2.9–3.2 kJ (84–89 %) | 7–13 % | 2–5 % |
+| 300 µH | 54–55 A | 56–60 N·m | 2.8–3.3 s | 14–16 km/h | 2.9–3.0 kJ (76–77 %) | 16–20 % | 4–8 % |
+| 500 µH | 38–40 A | 46–49 N·m | 4.8–5.5 s | 12–13 km/h | 2.6 kJ (63–64 %) | 26–32 % | 5–10 % |
+
+Percentages are of the 0.9–4.1 kJ the motor takes from the bike while
+saturated; at 35 km/h the bike carries 4.7 kJ. The loop settles one of two
+ways. In one, the charging current lifts A1's terminal voltage across the bank
+resistance and control returns within a second. In the other, the voltage stays
+on the d axis and most of the power stays in the windings. That is why the rows
+do not follow inductance in order. Iron losses and A1's own losses are not
+modelled.
+
+- **The bank only charges.** With `vq` at 0 the bank receives `−1.5·vd·id`,
+  and the d-axis loop always sets `vd` against `id`. The charging current
+  follows `id` down to about 0 just before control returns, where A1's own
+  losses come from the bank.
+- **Torque.** 1.5 · 10 pole pairs · λ · k = 1.215 N·m per amp at the wheel, so
+  the 40 A cap alone is 49 N·m against the 45 N·m rating. Peaks reach 104 N·m,
+  a deceleration of 3.1 m/s² at 100 kg. Letting go of the lever frees the
+  carrier and ends it.
+- **Heat.** Up to 3.2 kJ into the windings per event; with 0.2–0.4 kg of copper
+  (not published) that is a 20–40 K rise in the copper alone. The G020 has no
+  temperature sensor, and the firmware's temperature check reads A1's
+  transistors.
+- **Telemetry.** `i_motor` exceeds the 40 A command in magnitude in every case
+  up to 300 µH.
+- **Lower speeds.** From the 12.7 V resting bank at 15–25 km/h, saturation
+  clears within 0.2 s at up to 56 N·m, except at 300 µH, where it lasts up to
+  1.7 s.
+
 ---
 
 ## 3. Open
@@ -193,6 +237,8 @@ switching limit.
 - Minimum start-up voltage, rising and falling (spec §11 item 3).
 - G020 kV and phase resistance (spec §11 item 2): they fix the crossover speed
   and the power-peak currents above.
+- G020 phase inductance: it decides which row of the worst-case table applies.
+  VESC Tool's FOC detection measures it.
 - Whether the VESC's hall detection maps the G020's halls without a custom table.
 - Regen into a capacitor bank on real hardware: the firmware has no
   battery-specific logic beyond the voltage and current limits above, but it is
