@@ -55,7 +55,9 @@ through its body diodes; field weakening, off by default, applies in regen
 too; the 40 V maximum input voltage is a fault (500 ms stop, auto-clear), and
 a separate soft regen cut exists but is off by default; `SET_CURRENT` is
 signed torque and drives backward near standstill, while `SET_CURRENT_BRAKE`
-never motors. The efficiency relation behind the yield limit,
+never motors but shorts the phases (heat, not charge) at sign changes, near
+zero duty and at the start of braking, so regen stays on negative
+`SET_CURRENT`. The efficiency relation behind the yield limit,
 `1 − R·I/(λ·ω_e)` with R per phase, matches the VESC's own motor model.
 Setting 13 ("Sample in V0 and V7") is dropped: it has no effect on HW 410.
 

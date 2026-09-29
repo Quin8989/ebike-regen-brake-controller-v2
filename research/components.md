@@ -110,9 +110,12 @@ point.
   motor's back-EMF, with no minimum speed.
 - **Direction.** `SET_CURRENT` is signed torque. A negative current brakes a
   forward-turning rotor, but at or near standstill it drives the rotor
-  backward. `SET_CURRENT_BRAKE` always opposes the rotation, is capped at Motor
-  Current Max Brake, shorts the phases through the FETs near zero speed, and
-  never motors.
+  backward. `SET_CURRENT_BRAKE` always opposes the rotation and never motors,
+  but it is not purely regenerative: it shorts all three phases (duty 0)
+  whenever speed or `vq` changes sign, at near-zero duty, and at the start of
+  braking until the current reaches the set value, and while shorted the
+  energy goes into the windings as heat. The firmware uses negative
+  `SET_CURRENT` (RGX-2-003 §3).
 - **Release.** Any command below `cc_min_current` (0.05 A), including 0 A, stops
   switching within about 1 ms: all six FETs off. The UART timeout and every
   fault do the same. The phases are never shorted unless
