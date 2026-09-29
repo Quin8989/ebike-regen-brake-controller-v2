@@ -1,3 +1,5 @@
+import math
+
 import pytest
 
 import config as C
@@ -76,7 +78,7 @@ def test_boot_commands_nothing_until_the_link_is_clean():
 
 
 def test_assist_stays_assist_with_the_carrier_held(rig):
-    # review F02: s = 0 during assist too; the throttle must win
+    # s = 0 during assist too; the throttle must win
     rig.boot()
     for _ in range(40):
         i = rig.step(wheel=W, s=0.0, thr=0.5)
@@ -85,7 +87,7 @@ def test_assist_stays_assist_with_the_carrier_held(rig):
 
 
 def test_braking_regenerates(rig):
-    # review F01: with the carrier held the rotor turns forward (+ERPM) and
+    # with the carrier held the rotor turns forward (+ERPM) and
     # regen is negative current, so the VESC generates instead of motoring
     rig.boot()
     for _ in range(100):
@@ -108,7 +110,7 @@ def test_releasing_the_throttle_cuts_assist_at_once(rig):
 
 
 def test_throttle_loss_keeps_regen(rig):
-    # review F03: a dead throttle reads 0 (sensors.Throttle); that only stops
+    # a dead throttle reads 0 (sensors.Throttle); that only stops
     # assist, the link stays up and braking still regenerates
     rig.boot()
     for _ in range(20):
@@ -176,17 +178,19 @@ def band_plant(grip, seconds, delay_ticks=6, thr_at=None):
     return trace
 
 
-@pytest.mark.parametrize("grip", [8.0, 25.0, 32.0])
+@pytest.mark.parametrize("grip", [8.0, 20.0, 28.0])     # inside the yield cap (~30 A here)
 def test_regen_settles_where_the_rider_squeezes(grip):
     tail = band_plant(grip, 6.0)[-200:]
     assert all(abs(s - C.SLIP_SET) < 0.01 for s, _ in tail)       # at the allowed slip
     assert all(abs(-i - grip) < 0.5 for _, i in tail)             # torque = the squeeze
 
 
-def test_a_grip_beyond_the_envelope_just_holds_the_carrier():
-    # the bank cap (38 A at 25 V) binds first: full allowed regen, carrier held
+def test_a_grip_beyond_the_limits_just_holds_the_carrier():
+    # the carrier is held, so regen sits at the tighter of the bank cap
+    # (38 A at 25 V) and the yield cap at this speed
     tail = band_plant(60.0, 6.0)[-50:]
-    cap = (C.V_TERM_MAX - 25.0) / C.R_BANK
+    cap = min((C.V_TERM_MAX - 25.0) / C.R_BANK,
+              C.REGEN_A_PER_ERPM * rotor_erpm(W, 0.0))
     assert all(s == 0.0 and abs(-i - cap) < 1e-6 for s, i in tail)
 
 
@@ -209,12 +213,28 @@ def test_no_regen_near_a_standstill(rig):
 
 
 def test_request_caps_regen():
-    assert request(1.0, 1.0, 0.0, -C.I_REGEN_MAX) == -C.I_REGEN_MAX
+    assert request(1.0, 1.0, 0.0, -C.I_REGEN_MAX, 1e6) == -C.I_REGEN_MAX
+
+
+@pytest.mark.parametrize("kmh", [3.5, 5.0, 10.0, 15.0, 20.0, 30.0])
+def test_regen_yield_limit(kmh):
+    # at full demand the cap keeps >= REGEN_MIN_YIELD of the braking energy
+    # going into the bank, after the carrier's slip loss, at every speed
+    wheel = kmh / (C.WHEEL_CIRC_M * 0.06)
+    erpm = rotor_erpm(wheel, 0.0)
+    i = -request(1.0, 1.0, 0.0, -C.I_REGEN_MAX, erpm)
+    emf = C.MOTOR_FLUX_WB * erpm * 2 * math.pi / 60      # flux x electrical rad/s
+    assert 0.0 < i <= C.I_REGEN_MAX
+    assert (1 - C.SLIP_SET) * (1 - C.MOTOR_R_OHM * i / emf) >= C.REGEN_MIN_YIELD - 1e-6
+
+
+def test_no_regen_without_rotor_speed():
+    assert request(1.0, 1.0, 0.0, -10.0, 0.0) == 0.0
 
 
 def test_request_never_regenerates_while_coasting():
     i = 0.0
     for _ in range(100):
         e = C.SLIP_SET - 1.0
-        i = envelope(request(e, 0.0, 0.0, i), i, 25.0, 0.0)
+        i = envelope(request(e, 0.0, 0.0, i, rotor_erpm(W, 0.0)), i, 25.0, 0.0)
     assert i == 0.0

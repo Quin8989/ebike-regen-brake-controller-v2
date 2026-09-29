@@ -1,7 +1,7 @@
 # vesc.py — VESC UART link: framing, CRC16, parser, per-tick schedule.
 #
 # Pure over a duck-typed uart (.any(), .readinto(mv), .write(buf)), so it runs under
-# CPython for tests. RGX-2-003 D5/D7/D11.
+# CPython for tests. RGX-2-003 §4.
 #
 # Health is one number: `ok`, the count of consecutive clean telemetry frames.
 # Silence, a VESC fault or a dead link all reset it, and control only commands

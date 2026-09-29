@@ -1,0 +1,4 @@
+# Host-side tools, pinned to the MicroPython release the firmware targets (v1.29.0)
+pytest
+mpy-cross==1.29.0.post2
+mpremote==1.29.0

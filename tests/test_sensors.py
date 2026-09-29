@@ -28,7 +28,7 @@ class FakeSM:
 SPAN = C.THR_FULL - C.THR_IDLE
 
 
-# --- throttle (review F05, F18, F03) -------------------------------------------------
+# --- throttle ------------------------------------------------------------------------
 def test_idle_reads_zero_and_arms():
     t = Throttle(FakeADC(C.THR_IDLE))
     assert t.read() == 0.0 and t.armed
@@ -71,7 +71,7 @@ def test_open_or_shorted_reads_zero_and_disarms(frac):
     assert t.read() > 0.5
 
 
-# --- wheel speed (review F10, F30, F31, F54, F59) ------------------------------------
+# --- wheel speed ---------------------------------------------------------------------
 def rpm_for(kmh):
     return kmh / 3.6 / C.WHEEL_CIRC_M * 60
 

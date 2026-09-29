@@ -16,20 +16,20 @@ PIN_SCL = const(5)
 PIN_SPD = const(13)           # shell speed sensor via R6, pull-up on
 PIN_THR = const(26)           # ADC0, throttle
 
-# --- VESC link (RGX-2-003 D3-D7) --------------------------------------------
+# --- VESC link (RGX-2-003 §4) -----------------------------------------------
 UART_ID = const(0)
 UART_BAUD = const(115200)
 UART_RXBUF = const(1024)
-TICK_MS = const(10)           # 100 Hz (D8). The loop is fixed-rate, so control
+TICK_MS = const(10)           # 100 Hz. The loop is fixed-rate, so control
 DT = TICK_MS / 1000           # never does time arithmetic: timeouts count ticks.
                               # Each tick sends a current command and a
                               # telemetry request (20 bytes) and gets a 27-byte
                               # reply: at most a quarter of either direction.
-LINK_TIMEOUT_TICKS = const(25)    # 250 ms of silence -> LIMP (D7)
+LINK_TIMEOUT_TICKS = const(25)    # 250 ms without a clean reply -> 0 A
 LINK_RECOVER_FRAMES = const(10)   # clean frames in a row before current flows
 
 # --- Mechanics ---------------------------------------------------------------
-# Sign convention, fixed by provisioning (tools/A1-SETUP.md): A1's motor
+# Sign convention, fixed by provisioning (RGX-2-003 §11 item 4): A1's motor
 # direction is set so +current drives the wheel forward. With the carrier held
 # (clutch in assist, brake in regen) the rotor then turns at +k x wheel, so
 # ERPM >= 0 whenever torque flows, +amps motor and -amps generate. There is no
@@ -48,13 +48,30 @@ W_MIN_RPM = 24.0              # ~3 km/h: slip undefined and no regen below this
 # current is driven until the carrier just slips at SLIP_SET, so braking
 # follows the lever and (1 - SLIP_SET) of it is harvested.
 SLIP_SET = 0.12               # [BENCH] allowed slip = pad-loss fraction. 6 PPR
-                              # staleness needs >= 0.10-0.15 (motor-selection §4)
+                              # staleness needs >= 0.10-0.15 (research/components.md §1)
 SLIP_KP = 100.0               # [BENCH] A per unit slip error. The carrier is an
 SLIP_KI = 300.0               # [BENCH] A/s per unit   integrating plant, so I-only
                               # control limit-cycles; these settle with <= 60 ms of
                               # slip staleness in a toy plant. Tune in the sim.
 
-# --- Safety envelope (spec §3, §10; RGX-2-003 §3 as amended) -----------------
+# --- Regen: yield limit (RGX-2-003 §3) -----------------------------------------
+# In FOC the VESC's motor current I (q-axis) takes 1.5*flux*w_e*I from the shaft
+# and loses 1.5*R*I^2 in the copper, so the share of braking power that reaches
+# the bank is 1 - R*I / (flux*w_e); past I = flux*w_e/R the motor drains the
+# bank to brake. Regen is capped so at least REGEN_MIN_YIELD of the braking
+# energy reaches the bank after the carrier's slip loss (1 - SLIP_SET): a cap
+# proportional to ERPM. Gear, switching and iron losses are not counted.
+REGEN_MIN_YIELD = 0.30
+MOTOR_FLUX_WB = 0.0162        # [BENCH] VESC Tool FOC detection, flux linkage.
+                              # From Bafang's no-load 245 rpm at 36 V, 10 pole
+                              # pairs, 5:1 (research/components.md)
+MOTOR_R_OHM = 0.25            # [BENCH] VESC Tool FOC detection, motor resistance
+                              # (per phase): ~0.5 ohm between phases reported for
+                              # the SWX02 (the G020's earlier name)
+REGEN_A_PER_ERPM = ((1.0 - REGEN_MIN_YIELD / (1.0 - SLIP_SET))
+                    * MOTOR_FLUX_WB * 0.1047198 / MOTOR_R_OHM)   # 2*pi/60: ERPM -> rad/s
+
+# --- Envelope (spec §3, §10; RGX-2-003 §3) -----------------------------------
 I_ASSIST_MAX = 40.0           # A1 battery limit mirror (spec §10.4)
 I_REGEN_MAX = 40.0
 SLEW_STEP_A = 2.0             # per tick = 200 A/s on the requested current
@@ -73,7 +90,7 @@ THR_DEADBAND = 0.05           # fraction of span; also where assist arms
 WDT_MS = const(2000)
 GC_DIV = const(10)            # scheduled gc.collect() every N ticks
 
-# --- Display (RGX-2-003 D14 as amended) ----------------------------------------
+# --- Display (RGX-2-003 §6) --------------------------------------------------
 OLED_ADDR = const(0x3C)
 I2C_FREQ = const(400_000)
 DISPLAY_MS = const(200)       # 5 Hz

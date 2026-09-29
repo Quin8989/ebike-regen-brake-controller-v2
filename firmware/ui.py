@@ -6,7 +6,7 @@
 # second core.
 #
 # problems() and draw() are pure (host-tested); Oled and run() are
-# target-only. RGX-2-003 D14 as amended in Rev D.
+# target-only. RGX-2-003 §6.
 
 import config as C
 import control as K
