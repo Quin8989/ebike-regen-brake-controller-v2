@@ -114,20 +114,23 @@ gives strong braking torque with a modest charge current. v1's ride logs (in
 the archived repository) show regen commands reaching 40 A on this board, with
 the measured motor current following.
 
-**Power peak at low speed.** Net regen power is `P = E·I − 1.5·R·I²` (E =
-back-EMF, R = phase resistance). It peaks at `I = E/(3R)` and reaches zero at
-`I = E/(1.5R)`; beyond that the controller draws from the bank to brake. With
-the SX2's constants as a stand-in until the G020 is measured (7.4 rpm/V,
-R ≈ 59.5 mΩ per phase):
+**Power peak at low speed.** In the VESC's FOC model, regen current I takes
+`1.5·λ·ω_e·I` from the shaft and loses `1.5·R·I²` in the windings (λ = flux
+linkage, ω_e = electrical speed, R = phase resistance), so the bank receives
+`1.5·I·(λ·ω_e − R·I)`. That peaks at `I = λ·ω_e/(2R)` and reaches zero at
+`I = λ·ω_e/R`; beyond that the controller draws from the bank to brake. With the
+firmware's placeholder G020 constants (λ = 0.020 Wb, R = 0.30 Ω, 10 pole pairs,
+k = 5):
 
-| Speed | Back-EMF | Peak-power current | Net-zero current |
-|---|---|---|---|
-| 25 km/h | 27 V | 152 A | 304 A |
-| 10 km/h | 11 V | 61 A | 122 A |
-| 5 km/h | 5.4 V | 30 A | 61 A |
+| Speed | λ·ω_e | Peak-power current | Net-zero current | Firmware cap (30 % yield) |
+|---|---|---|---|---|
+| 3 km/h | 2.5 V | 4 A | 8 A | 5.5 A |
+| 10 km/h | 8.3 V | 14 A | 28 A | 18 A |
+| 20 km/h | 16.6 V | 28 A | 55 A | 36 A |
+| 25 km/h | 20.8 V | 35 A | 69 A | 40 A (`I_REGEN_MAX`) |
 
-The firmware's regen ceiling is a fixed `I_REGEN_MAX` (40 A) with no regen below
-`W_MIN_RPM` (≈ 3 km/h); it does not scale with speed.
+The firmware caps regen so at least 30 % of the braking energy reaches the bank
+(RGX-2-003 §3, yield limit).
 
 **Uncontrolled regen above the bank voltage.** When back-EMF exceeds the bank
 voltage, current flows through the MOSFET body diodes whatever the controller

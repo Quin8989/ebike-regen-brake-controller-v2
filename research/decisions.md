@@ -41,6 +41,21 @@ points to a ground offset, not timing).
 
 ---
 
+## 2026-09-29 — Regen yield limit
+
+**Decided (owner).** Regen current is capped so it can never drain the bank to
+brake: at least 30 % of the braking energy must reach the bank
+(`REGEN_MIN_YIELD`). In the VESC's FOC model the share reaching the bank is
+`1 − R·I/(λ·ω_e)`, so after the carrier's slip loss the cap is
+`I ≤ (1 − 0.30/(1 − SLIP_SET))·λ·ω_e/R`, proportional to ERPM. λ and R come from
+the VESC's FOC motor detection; until then they are estimates (0.020 Wb,
+0.30 Ω), with R taken high so the cap errs low. With those values the cap
+binds below about 22 km/h (5.5 A at 3 km/h, 36 A at 20 km/h). It replaces the
+fixed 40 A regen ceiling at low speed, the gap left by the earlier controller
+study's "ceiling must scale with speed".
+
+---
+
 ## 2026-09-29 — Display current, fault retry and cores (owner answers)
 
 **Decided (owner).**

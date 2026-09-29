@@ -54,6 +54,21 @@ SLIP_KI = 300.0               # [BENCH] A/s per unit   integrating plant, so I-o
                               # control limit-cycles; these settle with <= 60 ms of
                               # slip staleness in a toy plant. Tune in the sim.
 
+# --- Regen: yield limit (RGX-2-003 §3) -----------------------------------------
+# In FOC the VESC's motor current I (q-axis) takes 1.5*flux*w_e*I from the shaft
+# and loses 1.5*R*I^2 in the copper, so the share of braking power that reaches
+# the bank is 1 - R*I / (flux*w_e); past I = flux*w_e/R the motor drains the
+# bank to brake. Regen is capped so at least REGEN_MIN_YIELD of the braking
+# energy reaches the bank after the carrier's slip loss (1 - SLIP_SET): a cap
+# proportional to ERPM. Gear, switching and iron losses are not counted.
+REGEN_MIN_YIELD = 0.30
+MOTOR_FLUX_WB = 0.020         # [BENCH] VESC Tool FOC detection, flux linkage.
+                              # Estimate: 10 pole pairs, 5:1, ~200 wheel rpm at 36 V
+MOTOR_R_OHM = 0.30            # [BENCH] VESC Tool FOC detection, motor resistance
+                              # (per phase). Estimate for a small 250 W geared hub
+REGEN_A_PER_ERPM = ((1.0 - REGEN_MIN_YIELD / (1.0 - SLIP_SET))
+                    * MOTOR_FLUX_WB * 0.1047198 / MOTOR_R_OHM)   # 2*pi/60: ERPM -> rad/s
+
 # --- Envelope (spec §3, §10; RGX-2-003 §3) -----------------------------------
 I_ASSIST_MAX = 40.0           # A1 battery limit mirror (spec §10.4)
 I_REGEN_MAX = 40.0

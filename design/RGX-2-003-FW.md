@@ -56,8 +56,23 @@ Regen grows while the carrier is held (s < 0.12) until it just slips, so the
 braking torque follows the lever; with the carrier released (s → 1) regen falls
 to 0. The velocity form works from the current actually sent, so nothing winds
 up while the envelope clamps. Below `W_MIN_RPM`, e is at its minimum and regen
-can only fall. The regen ceiling is fixed; it does not scale with speed
-(`research/components.md` §2, power peak at low speed).
+can only fall.
+
+**Yield limit.** Regen is also capped at `REGEN_A_PER_ERPM × ERPM` (and at
+`I_REGEN_MAX`, 40 A). In FOC the VESC's motor current I takes
+`1.5·λ·ω_e·I` from the shaft and loses `1.5·R·I²` in the windings, so the share
+of braking power reaching the bank is `1 − R·I/(λ·ω_e)` (λ = flux linkage,
+ω_e = electrical speed, R = phase resistance). The cap keeps at least
+`REGEN_MIN_YIELD` (30 %) of the braking energy going into the bank after the
+carrier's slip loss:
+
+```
+I ≤ (1 − REGEN_MIN_YIELD / (1 − SLIP_SET)) · λ · ω_e / R
+```
+
+With the placeholder constants (λ = 0.020 Wb, R = 0.30 Ω) this is 5.5 A at
+3 km/h, 18 A at 10 km/h and 36 A at 20 km/h; above about 22 km/h the 40 A
+ceiling binds first. Gear, switching and iron losses are not counted.
 
 **Envelope** (`envelope()`). Current builds by at most `SLEW_STEP_A` (2 A) per
 tick; any reduction, including a reversal, is immediate. The result is clamped
@@ -133,7 +148,8 @@ watchdog.
 
 All in `config.py`. Measured values are still needed for these `[BENCH]`
 constants: `K_RATIO`, `POLE_PAIRS`, `WHEEL_CIRC_M`, `SLIP_SET`, `SLIP_KP`,
-`SLIP_KI`, `R_BANK` (bank ESR plus wiring; the voltage clamp assumes it is at
+`SLIP_KI`, `MOTOR_FLUX_WB` and `MOTOR_R_OHM` (both from the VESC's FOC motor
+detection, §11 item 3), `R_BANK` (bank ESR plus wiring; the voltage clamp assumes it is at
 least the true value), `THR_IDLE`, `THR_FULL`, `TEMP_HOT`, `TEMP_COLD`. The
 current limits `I_ASSIST_MAX` / `I_REGEN_MAX` (40 A) mirror the VESC's
 configured limits.
@@ -167,7 +183,7 @@ runtime.
 |---|---|---|---|
 | 1 | Firmware | As installed: 6.6 on the owned unit (HW 410) | The telemetry used exists in every VESC firmware since 3.41 |
 | 2 | LispBM | No script running | The v1 script on the owned unit pushes 100 Hz custom frames, about 19 % of the link |
-| 3 | Motor detection | FOC, sensored (halls H1–H3) | Spec §7 |
+| 3 | Motor detection | FOC, sensored (halls H1–H3) | Spec §7. Its flux linkage and resistance results are `MOTOR_FLUX_WB` and `MOTOR_R_OHM` |
 | 4 | Motor direction | *Invert Motor Direction* set so +2 A (Current test) turns the wheel forward with the carrier on its clutch; spinning the wheel forward with the carrier held reads ERPM > 0 | The firmware's only sign convention (§3); it has no direction setting |
 | 5 | App | UART, 115200 baud | §4 |
 | 6 | App timeout | 200 ms, timeout brake current 0 A | A dead Pico or cut wire releases the motor within 0.2 s (§4) |

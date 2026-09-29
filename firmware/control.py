@@ -34,10 +34,12 @@ def slip(erpm, w_rpm):
     return 0.0 if s < 0.0 else (1.0 if s > 1.0 else s)
 
 
-def request(e, de, throttle, i_last):
+def request(e, de, throttle, i_last, erpm):
     """The rider's current request: the throttle gives assist and ends regen;
     otherwise PI on the slip error e = SLIP_SET - s toward the allowed slip,
-    up to I_REGEN_MAX.
+    up to the lesser of I_REGEN_MAX and the yield limit REGEN_A_PER_ERPM x
+    ERPM, which keeps at least REGEN_MIN_YIELD of the braking energy going
+    into the bank (config.py).
 
     Velocity form: it adjusts the current actually sent last tick, so nothing
     winds up while the envelope clamps it. While the rider holds the carrier
@@ -52,9 +54,10 @@ def request(e, de, throttle, i_last):
     if throttle > 0.0:
         return C.I_ASSIST_MAX * throttle
     r = (-i_last if i_last < 0.0 else 0.0) + C.SLIP_KP * de + C.SLIP_KI * e * C.DT
-    if r <= 0.0:
+    cap = min(C.I_REGEN_MAX, C.REGEN_A_PER_ERPM * erpm)
+    if r <= 0.0 or cap <= 0.0:
         return 0.0
-    return -r if r < C.I_REGEN_MAX else -C.I_REGEN_MAX
+    return -r if r < cap else -cap
 
 
 def envelope(req, last, v_in, i_in):
@@ -96,7 +99,7 @@ class Control:
         de = e - self._e
         self._e = e
         run = L.ok >= C.LINK_RECOVER_FRAMES
-        i = envelope(request(e, de, thr, self.i), self.i, L.v_in, L.i_in) if run else 0.0
+        i = envelope(request(e, de, thr, self.i, L.erpm), self.i, L.v_in, L.i_in) if run else 0.0
         self.i = i
         L.send(i)
 
