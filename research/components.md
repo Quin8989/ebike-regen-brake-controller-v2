@@ -31,7 +31,10 @@ brake has to resist the forward direction, the one the clutch does not.
 | Planetary | Single stage, ~5:1, nylon planet gears |
 | Torque rating | ~45 N·m at the wheel |
 | Rotor | 20 magnets (10 pole pairs) |
-| Speed | ~200 rpm at 36 V → kV ≈ 5.56 wheel-rpm/V (estimate; spec §11 item 2) |
+| Speed at 36 V | No load 245 rpm, rated 205 rpm (26–28″ winding; the 20″ winding is 325 / 290 rpm). kV ≈ 6.8 wheel-rpm/V from the no-load speed |
+| Flux linkage | ≈ 16.2 mWb: line-to-line back-EMF equals 36 V at the no-load speed, `λ = V / (√3·ω_e)` |
+| Phase resistance | ≈ 0.25 Ω: about 0.5 Ω between any two phase wires is reported for the SWX02. The droop from no-load to rated speed at 80 % efficiency gives ≈ 0.34 Ω, an upper bound since it includes controller and wiring drops |
+| Efficiency | ≥ 80 % (Bafang) |
 | Motor speed | Three halls on the rotor, read by the VESC |
 | Wheel speed | 6 magnets in the case read by a Honeywell SS43F, on the white wire (confirmed for SWX02 / RM G020; KT controllers use `P2 = 6` for it) |
 | Cable | One 9-pin Higo Z910: three phases, 5 V, ground, three halls, white speed wire |
@@ -119,25 +122,25 @@ the measured motor current following.
 linkage, ω_e = electrical speed, R = phase resistance), so the bank receives
 `1.5·I·(λ·ω_e − R·I)`. That peaks at `I = λ·ω_e/(2R)` and reaches zero at
 `I = λ·ω_e/R`; beyond that the controller draws from the bank to brake. With the
-firmware's placeholder G020 constants (λ = 0.020 Wb, R = 0.30 Ω, 10 pole pairs,
-k = 5):
+G020 constants above (λ = 0.0162 Wb, R = 0.25 Ω, 10 pole pairs, k = 5):
 
 | Speed | λ·ω_e | Peak-power current | Net-zero current | Firmware cap (30 % yield) |
 |---|---|---|---|---|
-| 3 km/h | 2.5 V | 4 A | 8 A | 5.5 A |
-| 10 km/h | 8.3 V | 14 A | 28 A | 18 A |
-| 20 km/h | 16.6 V | 28 A | 55 A | 36 A |
-| 25 km/h | 20.8 V | 35 A | 69 A | 40 A (`I_REGEN_MAX`) |
+| 3 km/h | 2.0 V | 4 A | 8 A | 5.3 A |
+| 10 km/h | 6.7 V | 13 A | 27 A | 18 A |
+| 20 km/h | 13.5 V | 27 A | 54 A | 35 A |
+| 25 km/h | 16.8 V | 34 A | 67 A | 40 A (`I_REGEN_MAX`) |
 
 The firmware caps regen so at least 30 % of the braking energy reaches the bank
 (RGX-2-003 §3, yield limit).
 
-**Uncontrolled regen above the bank voltage.** When back-EMF exceeds the bank
-voltage, current flows through the MOSFET body diodes whatever the controller
-commands. With the stand-in constants, back-EMF at 25 km/h is about 27 V against
-a resting bank of about 12.7 V, so braking at speed starts in this region. It is
-self-limiting: charging the bank from 12 to 27 V takes about 1.95 kJ. The
-crossover speed depends on kV (spec §9 bank-overvoltage caveat, §11 item 2).
+**Uncontrolled regen above the bank voltage.** When the line-to-line back-EMF
+exceeds the bank voltage, current flows through the MOSFET body diodes whatever
+the controller commands. With kV ≈ 6.8 wheel-rpm/V the crossover is about
+10.9 km/h at the 12.7 V resting bank, 34 km/h at 40 V and 39 km/h at the 45.4 V
+absolute ceiling (spec §9 bank-overvoltage caveat, §11 item 2). Braking at speed
+from a resting bank therefore starts in this region; it is self-limiting,
+because the diode current charges the bank toward the back-EMF.
 
 **FOC settings from a generator application.** "Sample in V0 and V7" stabilised
 current measurements, and a lower observer gain improved stability

@@ -41,6 +41,21 @@ points to a ground offset, not timing).
 
 ---
 
+## 2026-09-29 — G020 constants from published data; crossover corrected
+
+**Decided.** Until the bench measures them, the firmware uses constants derived
+from published figures (`research/components.md` §1): flux linkage 0.0162 Wb
+from Bafang's no-load 245 rpm at 36 V (26–28″ winding; 10 pole pairs, 5:1),
+and phase resistance 0.25 Ω from the ~0.5 Ω phase-to-phase reported for the
+SWX02. The 2026-08-02 entry below took kV from the rated (loaded) 205 rpm, so
+kV_wheel ≈ 5.56 rpm/V; from the no-load speed it is ≈ 6.8 rpm/V. The back-EMF
+crossover speeds rise accordingly: 10.9 km/h at the 12.7 V rest point (was
+8.9), 34 km/h at 40 V (was 28) and 39 km/h at 45.4 V (was 31.8). BOM
+compatibility sheet updated (RGX-2-002 Rev B). Measured kV (spec §11 item 2)
+still replaces all of these.
+
+---
+
 ## 2026-09-29 — Regen yield limit
 
 **Decided (owner).** Regen current is capped so it can never drain the bank to
@@ -48,9 +63,9 @@ brake: at least 30 % of the braking energy must reach the bank
 (`REGEN_MIN_YIELD`). In the VESC's FOC model the share reaching the bank is
 `1 − R·I/(λ·ω_e)`, so after the carrier's slip loss the cap is
 `I ≤ (1 − 0.30/(1 − SLIP_SET))·λ·ω_e/R`, proportional to ERPM. λ and R come from
-the VESC's FOC motor detection; until then they are estimates (0.020 Wb,
-0.30 Ω), with R taken high so the cap errs low. With those values the cap
-binds below about 22 km/h (5.5 A at 3 km/h, 36 A at 20 km/h). It replaces the
+the VESC's FOC motor detection; until then they come from published data
+(0.0162 Wb, 0.25 Ω; entry above). With those values the cap binds below about
+22 km/h (5.3 A at 3 km/h, 35 A at 20 km/h). It replaces the
 fixed 40 A regen ceiling at low speed, the gap left by the earlier controller
 study's "ceiling must scale with speed".
 

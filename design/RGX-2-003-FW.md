@@ -1,7 +1,7 @@
 # ReGenX v2 — Firmware Architecture
 
 **Document** RGX-2-003 **Rev E** · against RGX-2-001 Rev E / RGX-2-100 Rev F /
-RGX-2-002 Rev A · 2026-09-29
+RGX-2-002 Rev B · 2026-09-29
 
 Rev E describes the firmware as built in `firmware/`. Earlier revisions (the
 Rev B decision register, Rev C/D amendments) are in the git history; the
@@ -70,9 +70,11 @@ carrier's slip loss:
 I ≤ (1 − REGEN_MIN_YIELD / (1 − SLIP_SET)) · λ · ω_e / R
 ```
 
-With the placeholder constants (λ = 0.020 Wb, R = 0.30 Ω) this is 5.5 A at
-3 km/h, 18 A at 10 km/h and 36 A at 20 km/h; above about 22 km/h the 40 A
-ceiling binds first. Gear, switching and iron losses are not counted.
+With the current constants (λ = 0.0162 Wb and R = 0.25 Ω, from Bafang's
+published speed and a reported winding resistance; `research/components.md`
+§1) this is 5.3 A at 3 km/h, 18 A at 10 km/h and 35 A at 20 km/h; above about
+22 km/h the 40 A ceiling binds first. Gear, switching and iron losses are not
+counted.
 
 **Envelope** (`envelope()`). Current builds by at most `SLEW_STEP_A` (2 A) per
 tick; any reduction, including a reversal, is immediate. The result is clamped
