@@ -63,8 +63,8 @@ SLIP_KI = 300.0               # [BENCH] A/s per unit   integrating plant, so I-o
 # proportional to ERPM. Gear, switching and iron losses are not counted.
 REGEN_MIN_YIELD = 0.30
 MOTOR_FLUX_WB = 0.0162        # [BENCH] VESC Tool FOC detection, flux linkage.
-                              # From Bafang's no-load 245 rpm at 36 V (26-28 in
-                              # winding), 10 pole pairs, 5:1 (research/components.md)
+                              # From Bafang's no-load 245 rpm at 36 V, 10 pole
+                              # pairs, 5:1 (research/components.md)
 MOTOR_R_OHM = 0.25            # [BENCH] VESC Tool FOC detection, motor resistance
                               # (per phase): ~0.5 ohm between phases reported for
                               # the SWX02 (the G020's earlier name)

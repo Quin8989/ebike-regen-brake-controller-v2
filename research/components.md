@@ -31,7 +31,7 @@ brake has to resist the forward direction, the one the clutch does not.
 | Planetary | Single stage, ~5:1, nylon planet gears |
 | Torque rating | ~45 N·m at the wheel |
 | Rotor | 20 magnets (10 pole pairs) |
-| Speed at 36 V | No load 245 rpm, rated 205 rpm (26–28″ winding; the 20″ winding is 325 / 290 rpm). kV ≈ 6.8 wheel-rpm/V from the no-load speed |
+| Speed | No load 245 rpm at 36 V (325 rpm at 48 V: the same winding, ≈ 6.8 wheel-rpm/V); rated 205 rpm at 36 V |
 | Flux linkage | ≈ 16.2 mWb: line-to-line back-EMF equals 36 V at the no-load speed, `λ = V / (√3·ω_e)` |
 | Phase resistance | ≈ 0.25 Ω: about 0.5 Ω between any two phase wires is reported for the SWX02. The droop from no-load to rated speed at 80 % efficiency gives ≈ 0.34 Ω, an upper bound since it includes controller and wiring drops |
 | Efficiency | ≥ 80 % (Bafang) |

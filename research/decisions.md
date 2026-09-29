@@ -67,7 +67,8 @@ Setting 13 ("Sample in V0 and V7") is dropped: it has no effect on HW 410.
 
 **Decided.** Until the bench measures them, the firmware uses constants derived
 from published figures (`research/components.md` §1): flux linkage 0.0162 Wb
-from Bafang's no-load 245 rpm at 36 V (26–28″ winding; 10 pole pairs, 5:1),
+from Bafang's no-load 245 rpm at 36 V (325 rpm at 48 V, the same kV; 10 pole
+pairs, 5:1),
 and phase resistance 0.25 Ω from the ~0.5 Ω phase-to-phase reported for the
 SWX02. The 2026-08-02 entry below took kV from the rated (loaded) 205 rpm, so
 kV_wheel ≈ 5.56 rpm/V; from the no-load speed it is ≈ 6.8 rpm/V. The back-EMF
