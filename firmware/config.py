@@ -16,16 +16,16 @@ PIN_SCL = const(5)
 PIN_SPD = const(13)           # shell speed sensor via R6, pull-up on
 PIN_THR = const(26)           # ADC0, throttle
 
-# --- VESC link (RGX-2-003 D3-D7) --------------------------------------------
+# --- VESC link (RGX-2-003 §4) -----------------------------------------------
 UART_ID = const(0)
 UART_BAUD = const(115200)
 UART_RXBUF = const(1024)
-TICK_MS = const(10)           # 100 Hz (D8). The loop is fixed-rate, so control
+TICK_MS = const(10)           # 100 Hz. The loop is fixed-rate, so control
 DT = TICK_MS / 1000           # never does time arithmetic: timeouts count ticks.
                               # Each tick sends a current command and a
                               # telemetry request (20 bytes) and gets a 27-byte
                               # reply: at most a quarter of either direction.
-LINK_TIMEOUT_TICKS = const(25)    # 250 ms of silence -> LIMP (D7)
+LINK_TIMEOUT_TICKS = const(25)    # 250 ms without a clean reply -> 0 A
 LINK_RECOVER_FRAMES = const(10)   # clean frames in a row before current flows
 
 # --- Mechanics ---------------------------------------------------------------
@@ -54,7 +54,7 @@ SLIP_KI = 300.0               # [BENCH] A/s per unit   integrating plant, so I-o
                               # control limit-cycles; these settle with <= 60 ms of
                               # slip staleness in a toy plant. Tune in the sim.
 
-# --- Safety envelope (spec §3, §10; RGX-2-003 §3 as amended) -----------------
+# --- Envelope (spec §3, §10; RGX-2-003 §3) -----------------------------------
 I_ASSIST_MAX = 40.0           # A1 battery limit mirror (spec §10.4)
 I_REGEN_MAX = 40.0
 SLEW_STEP_A = 2.0             # per tick = 200 A/s on the requested current
@@ -73,7 +73,7 @@ THR_DEADBAND = 0.05           # fraction of span; also where assist arms
 WDT_MS = const(2000)
 GC_DIV = const(10)            # scheduled gc.collect() every N ticks
 
-# --- Display (RGX-2-003 D14 as amended) ----------------------------------------
+# --- Display (RGX-2-003 §6) --------------------------------------------------
 OLED_ADDR = const(0x3C)
 I2C_FREQ = const(400_000)
 DISPLAY_MS = const(200)       # 5 Hz

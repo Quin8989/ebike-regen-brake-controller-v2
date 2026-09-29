@@ -1,7 +1,7 @@
 # control.py — the 100 Hz tick: sense, decide, clamp, send, publish.
 #
 # Pure logic, host-testable: collaborators are duck-typed (tests/conftest.py)
-# and nothing here reads a clock. RGX-2-003 §3, D8-D10 (as amended in Rev D).
+# and nothing here reads a clock. RGX-2-003 §3.
 #
 # The only state is whether the link is healthy: current is commanded while
 # link.ok >= LINK_RECOVER_FRAMES (clean telemetry, no VESC fault) and is 0 A

@@ -3,6 +3,9 @@
 Requirements: rear, single-stage planetary, accessible carrier, motor halls plus
 a multi-pole shell speed sensor.
 
+**Outcome:** the Bafang G020 was selected (`decisions.md`, 2026-08-02). §2 is
+the Shengyi SX2 comparison it was chosen over.
+
 ---
 
 ## 1. Multi-pole shell sensors are standard, not rare

@@ -76,7 +76,7 @@ def test_boot_commands_nothing_until_the_link_is_clean():
 
 
 def test_assist_stays_assist_with_the_carrier_held(rig):
-    # review F02: s = 0 during assist too; the throttle must win
+    # s = 0 during assist too; the throttle must win
     rig.boot()
     for _ in range(40):
         i = rig.step(wheel=W, s=0.0, thr=0.5)
@@ -85,7 +85,7 @@ def test_assist_stays_assist_with_the_carrier_held(rig):
 
 
 def test_braking_regenerates(rig):
-    # review F01: with the carrier held the rotor turns forward (+ERPM) and
+    # with the carrier held the rotor turns forward (+ERPM) and
     # regen is negative current, so the VESC generates instead of motoring
     rig.boot()
     for _ in range(100):
@@ -108,7 +108,7 @@ def test_releasing_the_throttle_cuts_assist_at_once(rig):
 
 
 def test_throttle_loss_keeps_regen(rig):
-    # review F03: a dead throttle reads 0 (sensors.Throttle); that only stops
+    # a dead throttle reads 0 (sensors.Throttle); that only stops
     # assist, the link stays up and braking still regenerates
     rig.boot()
     for _ in range(20):

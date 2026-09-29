@@ -97,7 +97,7 @@ def test_unknown_opcode_is_ignored():
     assert link.ok == 1 and link.erpm == 100.0
 
 
-# --- parser robustness (RGX-2-003 §4; review F06/F26/F35) ------------------------
+# --- parser robustness (RGX-2-003 §4) ---------------------------------------------
 GOOD = telem(erpm=1234, v_in=30.0, i_in=5.34)  # i_in raw 0x0216: a false start inside
 
 
