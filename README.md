@@ -11,7 +11,7 @@ the regen current through a VESC motor controller.
 | Part | State |
 |---|---|
 | Electrical design | Released (spec, drawing, BOM). Not built or measured; spec §11 lists what is unmeasured |
-| Firmware | Complete; 270 host tests pass in CI. Not yet run on hardware (RGX-2-003 §10) |
+| Firmware | Complete; host tests pass in CI. Not yet run on hardware (RGX-2-003 §10) |
 | Carrier-brake mechanism | Concept study only; depends on a G020 teardown |
 | Constants | Gains, gear ratio, pole pairs and calibrations are placeholders, marked `[BENCH]` in `firmware/config.py` |
 | Part numbers | Not chosen for S1, S2, F1 fuse block, J4 (BOM lists candidates) |
