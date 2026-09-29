@@ -58,8 +58,8 @@ The pack holds the bank at **pack voltage minus one diode drop, ~14 V**.
 The leakage figure is derived from the published self-discharge spec, not the
 per-cell leakage line: 50 % voltage in 30–72 h implies τ ≈ 69 h, hence ~37 kΩ
 across 6.67 F and ~0.37 mA at 14 V. An earlier revision used 0.2 mA and claimed
-200 days. **Both numbers are estimates until the bank is measured** — see
-`design-parameters.md`.
+200 days. **Both numbers are estimates until the bank is measured** — see spec
+RGX-2-001 §11.
 
 Three consequences, two of them unplanned:
 
