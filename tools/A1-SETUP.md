@@ -3,7 +3,7 @@
 Do this in VESC Tool before the Pico ever commands current. The firmware
 checks none of it at runtime: these settings *are* the protection layer
 under it (RGX-2-003 D6). Save the final motor and app XML into
-`v2/tools/a1-config/` so the bench state is on record.
+`tools/a1-config/` so the bench state is on record.
 
 | # | Setting | Value | Why |
 |---|---|---|---|

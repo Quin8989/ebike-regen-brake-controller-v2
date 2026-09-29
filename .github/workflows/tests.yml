@@ -1,0 +1,23 @@
+name: tests
+
+on:
+  push:
+    branches: [main, "claude/**"]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  firmware:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: pip install pytest mpy-cross
+      - name: Host tests
+        run: python -m pytest -q
+      - name: Cross-compile firmware for the RP2040 (MicroPython syntax)
+        working-directory: firmware
+        run: for f in *.py; do mpy-cross -march=armv6m "$f"; done

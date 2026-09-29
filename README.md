@@ -3,6 +3,13 @@
 Clean-slate rebuild: carrier-braked (Freegen-style) regen on a **rear** geared
 hub, buffered by supercapacitors, returning energy as a few short boosts.
 
+**This is the working repository for ReGenX.** Its history is carried over
+from the `v2/` folder of the original project,
+[regenx-brake-assist-controller](https://github.com/Quin8989/regenx-brake-assist-controller),
+which is archived and deprecated. That repository stays read-only as the
+record of v1 (`v1-legacy/`: the first firmware, its ride logs and the scoring
+sim).
+
 ## Layout
 
 | Path | What it is | Authority |
@@ -10,7 +17,7 @@ hub, buffered by supercapacitors, returning energy as a few short boosts.
 | [`design/`](design/) | The **released design**: spec RGX-2-001 Rev E, drawing RGX-2-100 Rev F, BOM RGX-2-002, firmware architecture RGX-2-003 Rev D | **Authoritative** |
 | [`firmware/`](firmware/) | The v2 firmware (MicroPython, per RGX-2-003 Rev D, ~600 lines in 6 files). Host core green and cross-compiles for the RP2040; on-target gates FW-0..FW-2 pending a Pico | Implementation |
 | [`tools/`](tools/) | Host side: `deploy.sh` (mpremote, WDT-safe), `A1-SETUP.md` (VESC Tool checklist, including motor direction) | — |
-| [`tests/`](tests/) | CPython test suite for the firmware's pure core, driven through a Willis/clutch plant (`python -m pytest` from `v2/`). Runs in CI as its own job, with an `mpy-cross` build | — |
+| [`tests/`](tests/) | CPython test suite for the firmware's pure core, driven through a Willis/clutch plant (`python -m pytest` from the repository root). CI runs it and an `mpy-cross` build of every firmware file for the RP2040 | — |
 | [`research/`](research/) | Working analysis, decision log, sourcing notes — the *why* behind the design | History; where it disagrees with `design/`, the design wins |
 | [`reviews/`](reviews/) | External review rounds, kept verbatim as received | Historical record |
 
@@ -24,11 +31,11 @@ bench measurement schedule (spec §11), gated on:
    above which the bank charges through the controller's body diodes
 
 The firmware exists and is host-tested. Values that need the bench are marked
-`[BENCH]` in `firmware/config.py`. The regen control law is deliberately out of
-scope: it is the output of the scoring work in `../v1-legacy/sim/`, to be
-revamped against v2's sensing model. `control.request()` is that law: a PI that
-holds carrier slip at a setpoint, with the throttle as the override. Its gains
-are `[BENCH]` until the sim tunes them.
+`[BENCH]` in `firmware/config.py`. The regen law is `control.request()`: a PI
+that holds carrier slip at a setpoint, with the throttle as the override. Its
+gains are `[BENCH]`, to be tuned in the scoring sim (v1's, in
+[`v1-legacy/sim/`](https://github.com/Quin8989/regenx-brake-assist-controller/tree/main/v1-legacy/sim), revamped for v2's sensing
+model) and then on the stand.
 
 ## Research notes index
 

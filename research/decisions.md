@@ -1,7 +1,8 @@
 # Decision log — ReGenX v2
 
 **Scope: v2 only.** Nothing here modifies the v1 firmware, which now lives
-frozen in `v1-legacy/firmware/`. Numbers that look like config values are
+frozen in `v1-legacy/firmware/` of the original repository,
+[regenx-brake-assist-controller](https://github.com/Quin8989/regenx-brake-assist-controller). Numbers that look like config values are
 *targets for the new build*, not edits to the old one.
 
 Parts are still being mixed and matched. A "decided" entry fixes an approach, not
