@@ -3,7 +3,7 @@
 **Document** RGX-2-001 Rev F · **Drawing** RGX-2-100 Rev H · 2026-09-30
 
 Rev F: S2 voltage line ≥50 → ≥24 V DC (§7): the open contact sees at most
-23 V, the pack side of R1 (RGX-2-002 compatibility check). Drawing Rev H is
+23 V, the pack side of R1. Drawing Rev H is
 drafting only (colour classes, models on the sheets, sheet 4 arrangement).
 Rev E: U2's ground lands on the GND pin of A1's UART connector, and the UART
 and BEC wires run as one twisted bundle (§8). J1 and W1 are M1's single Higo
