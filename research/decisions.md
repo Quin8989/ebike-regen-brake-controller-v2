@@ -48,10 +48,15 @@ by someone new to the project.
   circuits and place the parts?), a drafting check, and a cross-check of every
   model and value against the parts lists and RGX-2-002. Round one returned
   about sixty items, four of them blocking; round two confirmed the fixes.
-- **Left open, tracked in RGX-2-002:** the S2 candidate (KSD301) is rated
-  48 V DC against the spec's ≥50 V DC; the BOM relaxes the line to ≥24 V DC
-  on the open-contact analysis and queues it for the spec. The parts list
-  says so beside S2.
+- **Spec Rev F, drawing Rev H, BOM Rev C, same day:** the S2 voltage line
+  becomes ≥24 V DC (the open contact sees at most 23 V), closing the change
+  RGX-2-002 had queued; the KSD301 candidate now meets it. The motor cable's
+  phase-conductor gauge and Z910 pin rating are added to spec §11 as
+  unverified against the 40 A motor-current limit (28 A RMS, events of a few
+  seconds); sellers rate Z910 extensions anywhere from 15 to 45 A, so W1 is
+  bought at the top of that range and M1's own cable is measured at the
+  continuity map. Rev H also clears two overlaps on sheet 3 and adds the
+  note-flag symbol to the legend.
 
 ---
 

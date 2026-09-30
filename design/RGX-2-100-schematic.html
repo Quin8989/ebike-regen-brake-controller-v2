@@ -1,5 +1,5 @@
 <meta charset="utf-8">
-<title>ReGenX v2 — Schematic Set Rev G</title>
+<title>ReGenX v2 — Schematic Set Rev H</title>
 <style>
   :root {
     --ground:#F2F4F4; --surface:#FFFFFF; --surface-2:#EAEDED;
@@ -129,7 +129,7 @@
 <div class="wrap">
 
 <header>
-  <div class="eyebrow">Document RGX-2-100 · Rev G</div>
+  <div class="eyebrow">Document RGX-2-100 · Rev H</div>
   <h1>ReGenX v2 — Schematic Set</h1>
 </header>
 
@@ -164,9 +164,10 @@
     <path class="wm" d="M1262 74 H 1286"/><text class="ts" x="1292" y="78">MOTOR</text>
     <path class="ws" d="M1036 92 H 1060"/><text class="ts" x="1066" y="96">CONTROL</text>
     <path class="wg" d="M1150 92 H 1174"/><text class="ts" x="1180" y="96">RETURN</text>
+    <rect class="brdt dash km" x="1262" y="87" width="24" height="10"/><text class="ts" x="1292" y="96">CABLE ASSY</text>
     <path class="wg dash" d="M1036 110 H 1060"/><text class="ts" x="1066" y="114">MECHANICAL</text>
-    <rect class="brdt dash km" x="1150" y="105" width="24" height="10"/><text class="ts" x="1180" y="114">CABLE ASSY</text>
-    <path class="wk" d="M1262 110 H 1268 A 6 6 0 0 1 1280 110 H 1286"/><text class="ts" x="1292" y="114">NOT JOINED</text>
+    <path class="wk" d="M1150 110 H 1156 A 6 6 0 0 1 1168 110 H 1174"/><text class="ts" x="1180" y="114">NOT JOINED</text>
+    <path class="flag" d="M1274 102 L 1282 116 L 1266 116 Z"/><text class="tf" x="1274" y="114" text-anchor="middle" style="font-size:8px">n</text><text class="ts" x="1292" y="114">NOTE n</text>
 
 
     <text class="tn" x="70" y="62">HOLDING THE CARRIER BRAKE TURNS M1 INTO A GENERATOR: A1 CHARGES C1–C3, AND THE THROTTLE RETURNS THE ENERGY AS ASSIST.</text>
@@ -278,7 +279,7 @@
     <text class="tt" x="1040" y="772">ReGenX v2</text>
     <text class="t"  x="1040" y="802">System block diagram</text>
     <text class="ts" x="1040" y="828">DWG  RGX-2-100</text>
-    <text class="ts" x="1240" y="828">REV  G</text>
+    <text class="ts" x="1240" y="828">REV  H</text>
     <text class="ts" x="1040" y="856">SHEET 1 OF 4</text>
     <text class="ts" x="1240" y="856">2026-09-30</text>
   </svg>
@@ -316,9 +317,10 @@
     <path class="wm" d="M1262 74 H 1286"/><text class="ts" x="1292" y="78">MOTOR</text>
     <path class="ws" d="M1036 92 H 1060"/><text class="ts" x="1066" y="96">CONTROL</text>
     <path class="wg" d="M1150 92 H 1174"/><text class="ts" x="1180" y="96">RETURN</text>
+    <rect class="brdt dash km" x="1262" y="87" width="24" height="10"/><text class="ts" x="1292" y="96">CABLE ASSY</text>
     <path class="wg dash" d="M1036 110 H 1060"/><text class="ts" x="1066" y="114">MECHANICAL</text>
-    <rect class="brdt dash km" x="1150" y="105" width="24" height="10"/><text class="ts" x="1180" y="114">CABLE ASSY</text>
-    <path class="wk" d="M1262 110 H 1268 A 6 6 0 0 1 1280 110 H 1286"/><text class="ts" x="1292" y="114">NOT JOINED</text>
+    <path class="wk" d="M1150 110 H 1156 A 6 6 0 0 1 1168 110 H 1174"/><text class="ts" x="1180" y="114">NOT JOINED</text>
+    <path class="flag" d="M1274 102 L 1282 116 L 1266 116 Z"/><text class="tf" x="1274" y="114" text-anchor="middle" style="font-size:8px">n</text><text class="ts" x="1292" y="114">NOTE n</text>
 
 
     <rect class="box kk" x="60" y="252" width="112" height="92" rx="3"/>
@@ -491,7 +493,7 @@
     <text class="tt" x="1040" y="772">ReGenX v2</text>
     <text class="t"  x="1040" y="802">Power distribution and protection</text>
     <text class="ts" x="1040" y="828">DWG  RGX-2-100</text>
-    <text class="ts" x="1240" y="828">REV  G</text>
+    <text class="ts" x="1240" y="828">REV  H</text>
     <text class="ts" x="1040" y="856">SHEET 2 OF 4</text>
     <text class="ts" x="1240" y="856">2026-09-30</text>
   </svg>
@@ -506,7 +508,7 @@
         <tr><td class="r">J4</td><td class="z">B1</td><td>Connector, charge</td><td class="m">4S balance-charge input to BT1 BMS. Upstream of F3. Balance taps not drawn. <strong>P/N TBD</strong>; RGX-2-002 candidate: XH-4S balance lead</td></tr>
         <tr><td class="r">F3</td><td class="z">B1</td><td>Fuse</td><td class="m">5 A time-delay, ≥32 V DC, <strong>in accessible inline holder — removing F3 is the BT1 service disconnect</strong>. 18 AWG branch protection. Duty 3.36 A / 90 s</td></tr>
         <tr><td class="r">R1</td><td class="z">B1–B2</td><td>Resistor, power</td><td class="m">4.7 Ω ±5 %, <strong>100 W</strong> wirewound alu-clad. Heatsink ≥150 cm² at 25 °C ambient. Duty 53 W / 22 s per cold start from a flat bank, <strong>832 J</strong>, ΔT 31 K</td></tr>
-        <tr><td class="r">S2</td><td class="z">B2</td><td>Switch, thermal cutout</td><td class="m">Normally-closed bimetal, open 100–110 °C, <strong>manual reset</strong>, ≥5 A, ≥50 V DC. Bonded to R1 body. <strong>P/N TBD</strong>; RGX-2-002 candidate: KSD301 (48 V DC, with the voltage line relaxed to ≥24 V DC, queued for the spec)</td></tr>
+        <tr><td class="r">S2</td><td class="z">B2</td><td>Switch, thermal cutout</td><td class="m">Normally-closed bimetal, open 100–110 °C, <strong>manual reset</strong>, ≥5 A, ≥24 V DC (open-contact voltage ≤23 V; spec Rev F). Bonded to R1 body. <strong>P/N TBD</strong>; RGX-2-002 candidate: KSD301</td></tr>
         <tr><td class="r">D1</td><td class="z">B2</td><td>Diode, rectifier</td><td class="m">Si, I<sub>F(AV)</sub> ≥ 6 A, V<sub>RRM</sub> ≥ 100 V, I<sub>R</sub> ≤ 10 µA @ 25 °C, V<sub>F</sub> ≈ 1.0 V @ 3.4 A. 6A10 or equiv</td></tr>
         <tr><td class="r">C1–C3</td><td class="z">B2–C2</td><td>Capacitor, EDLC module</td><td class="m">16.2 V, 20 F each (6 × 2.7 V 120 F). Series <strong>6.67 F</strong>, ESR 180–360 mΩ, 40 V working, <strong>45.4 V absolute</strong> at ≤10 % spread. Integral balancing is intra-module cell matching only — it does not divide voltage between modules</td></tr>
         <tr><td class="r">F1</td><td class="z">B3</td><td>Fuse</td><td class="m">50 A Class T, 160 V DC (Bussmann JJN-50 or equiv) + block. Zone of protection begins at F1. <strong>Block P/N TBD</strong>; RGX-2-002 candidate: Blue Sea 5502100</td></tr>
@@ -553,9 +555,10 @@
     <path class="wm" d="M1262 74 H 1286"/><text class="ts" x="1292" y="78">MOTOR</text>
     <path class="ws" d="M1036 92 H 1060"/><text class="ts" x="1066" y="96">CONTROL</text>
     <path class="wg" d="M1150 92 H 1174"/><text class="ts" x="1180" y="96">RETURN</text>
+    <rect class="brdt dash km" x="1262" y="87" width="24" height="10"/><text class="ts" x="1292" y="96">CABLE ASSY</text>
     <path class="wg dash" d="M1036 110 H 1060"/><text class="ts" x="1066" y="114">MECHANICAL</text>
-    <rect class="brdt dash km" x="1150" y="105" width="24" height="10"/><text class="ts" x="1180" y="114">CABLE ASSY</text>
-    <path class="wk" d="M1262 110 H 1268 A 6 6 0 0 1 1280 110 H 1286"/><text class="ts" x="1292" y="114">NOT JOINED</text>
+    <path class="wk" d="M1150 110 H 1156 A 6 6 0 0 1 1168 110 H 1174"/><text class="ts" x="1180" y="114">NOT JOINED</text>
+    <path class="flag" d="M1274 102 L 1282 116 L 1266 116 Z"/><text class="tf" x="1274" y="114" text-anchor="middle" style="font-size:8px">n</text><text class="ts" x="1292" y="114">NOTE n</text>
 
 
     <rect class="box km" x="60" y="60" width="130" height="260" rx="3"/>
@@ -580,7 +583,7 @@
     <path class="wmh" d="M190 160 H 390"/>
     <path class="wmh" d="M190 180 H 390"/>
     <path class="wmh" d="M190 200 H 390"/>
-    <path class="ws" d="M190 304 H 270 V 386"/>
+    <path class="ws" d="M190 304 H 330 V 416"/>
     <path class="wm" d="M190 252 H 390"/>
     <path class="wm" d="M190 268 H 390"/>
     <path class="wm" d="M190 284 H 390"/>
@@ -601,28 +604,28 @@
     <text class="tr kb" x="468" y="262" text-anchor="middle">A1 (phases)</text>
     <text class="ts" x="468" y="282" text-anchor="middle">leads U V W · SHT 2</text>
 
-    <circle class="dot" cx="270" cy="350" r="4"/>
-    <path class="ws" d="M270 350 H 226"/>
-    <rect class="sym kc" x="166" y="339" width="60" height="22" rx="2"/>
-    <text class="tr kc" x="196" y="330" text-anchor="middle">R5  10 kΩ</text>
-    <path class="ws" d="M166 350 H 136"/>
-    <path class="flag kc" d="M136 340 H 100 L 90 350 L 100 360 H 136 Z"/>
-    <text class="tf kc" x="115" y="354" text-anchor="middle">+3V3</text>
+    <circle class="dot" cx="330" cy="380" r="4"/>
+    <path class="ws" d="M330 380 H 226"/>
+    <rect class="sym kc" x="166" y="369" width="60" height="22" rx="2"/>
+    <text class="tr kc" x="196" y="360" text-anchor="middle">R5  10 kΩ</text>
+    <path class="ws" d="M166 380 H 136"/>
+    <path class="flag kc" d="M136 370 H 100 L 90 380 L 100 390 H 136 Z"/>
+    <text class="tf kc" x="115" y="384" text-anchor="middle">+3V3</text>
 
-    <path class="ws" d="M270 386 H 322"/>
-    <rect class="sym kc" x="322" y="375" width="54" height="22" rx="2"/>
-    <text class="tr kc" x="349" y="366" text-anchor="middle">R6  1 kΩ</text>
-    <path class="ws" d="M376 386 H 640"/>
-    <text class="ts" x="600" y="378" text-anchor="middle">SPD</text>
-    <circle class="dot" cx="440" cy="386" r="4"/>
-    <path class="ws" d="M440 386 V 414"/>
-    <path class="sym kc" d="M420 414 H 460"/>
-    <path class="sym kc" d="M420 426 H 460"/>
-    <text class="tr kc" x="470" y="426">C6  10 nF</text>
-    <path class="wg" d="M440 426 V 454"/>
-    <path class="wg" d="M420 454 H 460"/>
-    <path class="wg" d="M428 464 H 452"/>
-    <path class="wg" d="M436 474 H 444"/>
+    <path class="ws" d="M330 416 H 352"/>
+    <rect class="sym kc" x="352" y="405" width="54" height="22" rx="2"/>
+    <text class="tr kc" x="379" y="396" text-anchor="middle">R6  1 kΩ</text>
+    <path class="ws" d="M406 416 H 640"/>
+    <text class="ts" x="600" y="408" text-anchor="middle">SPD</text>
+    <circle class="dot" cx="470" cy="416" r="4"/>
+    <path class="ws" d="M470 416 V 444"/>
+    <path class="sym kc" d="M450 444 H 490"/>
+    <path class="sym kc" d="M450 456 H 490"/>
+    <text class="tr kc" x="500" y="456">C6  10 nF</text>
+    <path class="wg" d="M470 456 V 484"/>
+    <path class="wg" d="M450 484 H 490"/>
+    <path class="wg" d="M458 494 H 482"/>
+    <path class="wg" d="M466 504 H 474"/>
 
     <rect class="box kc" x="60" y="530" width="140" height="110" rx="3"/>
     <text class="tr kc" x="130" y="556" text-anchor="middle">J3</text>
@@ -675,7 +678,7 @@
     <text class="ts" x="765" y="176" text-anchor="middle">Raspberry Pi Pico</text>
     <text class="ts" x="765" y="194" text-anchor="middle">RP2040 · VSYS 1.8–5.5 V</text>
 
-    <text class="ts" x="652" y="390">GP13</text>
+    <text class="ts" x="652" y="420">GP13</text>
     <text class="ts" x="652" y="582">GP26</text>
 
     <text class="ts" x="878" y="232" text-anchor="end">VSYS</text>
@@ -714,8 +717,8 @@
     <path class="ws" d="M954 226 V 262"/>
     <path class="sym kc" d="M934 262 H 974"/>
     <path class="sym kc" d="M934 274 H 974"/>
-    <text class="tr kc" x="980" y="270">C5</text>
-    <text class="ts" x="980" y="284">100 nF</text>
+    <text class="tr kc" x="946" y="270" text-anchor="end">C5</text>
+    <text class="ts" x="946" y="284" text-anchor="end">100 nF</text>
     <path class="wg" d="M954 274 V 306"/>
     <path class="wg" d="M934 306 H 974"/>
     <path class="wg" d="M942 316 H 966"/>
@@ -793,7 +796,7 @@
     <text class="tt" x="1040" y="772">ReGenX v2</text>
     <text class="t"  x="1040" y="802">MCU, sensors and interfaces</text>
     <text class="ts" x="1040" y="828">DWG  RGX-2-100</text>
-    <text class="ts" x="1240" y="828">REV  G</text>
+    <text class="ts" x="1240" y="828">REV  H</text>
     <text class="ts" x="1040" y="856">SHEET 3 OF 4</text>
     <text class="ts" x="1240" y="856">2026-09-30</text>
   </svg>
@@ -860,9 +863,10 @@
     <path class="wm" d="M1262 74 H 1286"/><text class="ts" x="1292" y="78">MOTOR</text>
     <path class="ws" d="M1036 92 H 1060"/><text class="ts" x="1066" y="96">CONTROL</text>
     <path class="wg" d="M1150 92 H 1174"/><text class="ts" x="1180" y="96">RETURN</text>
+    <rect class="brdt dash km" x="1262" y="87" width="24" height="10"/><text class="ts" x="1292" y="96">CABLE ASSY</text>
     <path class="wg dash" d="M1036 110 H 1060"/><text class="ts" x="1066" y="114">MECHANICAL</text>
-    <rect class="brdt dash km" x="1150" y="105" width="24" height="10"/><text class="ts" x="1180" y="114">CABLE ASSY</text>
-    <path class="wk" d="M1262 110 H 1268 A 6 6 0 0 1 1280 110 H 1286"/><text class="ts" x="1292" y="114">NOT JOINED</text>
+    <path class="wk" d="M1150 110 H 1156 A 6 6 0 0 1 1168 110 H 1174"/><text class="ts" x="1180" y="114">NOT JOINED</text>
+    <path class="flag" d="M1274 102 L 1282 116 L 1266 116 Z"/><text class="tf" x="1274" y="114" text-anchor="middle" style="font-size:8px">n</text><text class="ts" x="1292" y="114">NOTE n</text>
 
 
     <!-- bicycle, side view, facing right -->
@@ -1033,7 +1037,7 @@
     <text class="tt" x="1040" y="772">ReGenX v2</text>
     <text class="t"  x="1040" y="802">Physical arrangement</text>
     <text class="ts" x="1040" y="828">DWG  RGX-2-100</text>
-    <text class="ts" x="1240" y="828">REV  G</text>
+    <text class="ts" x="1240" y="828">REV  H</text>
     <text class="ts" x="1040" y="856">SHEET 4 OF 4</text>
     <text class="ts" x="1240" y="856">2026-09-30</text>
   </svg>
@@ -1083,6 +1087,7 @@
         <tr><td class="r">E</td><td class="z">2026-09-29</td><td>C6 1 → 10 nF: shell-speed input filtered against phase-lead PWM coupling (R6·C6 1 → 10 µs; rising edge 110 µs, about 1 % of a half-period at 60 km/h). Title blocks to REV E.</td></tr>
         <tr><td class="r">F</td><td class="z">2026-09-29</td><td>U2 ground lands on the GND pin of A1's UART connector, the reference of the UART signals, instead of the V− star, so no battery current flows between the two grounds: +5V_RTN drawn on SHEET 3, SHEET 3 NOTE 8 revised, NOTE 9 added (UART and BEC pair as one twisted bundle), SHEET 1 NOTE 2 and SHEET 2 NOTE 1 limited to power grounds. SHEET 3 NOTE 7 (VSYS logging) deleted. J1 redrawn as M1's single Higo Z910 cable, pins by continuity map; W1 is the Z910 splitter (queued from RGX-2-002 Rev A). Sheet 3 notes respaced. Title blocks to REV F.</td></tr>
         <tr><td class="r">G</td><td class="z">2026-09-30</td><td>Colour by class on every sheet (bank power, keep-alive, motor, control, return), legend at top right, SHEET 1 NOTES 5–7. Selected models and ratings written at each part; note flags in ink, net flags in the net's class. SHEET 1: system statement added, UART now runs to A1 (it ended at U1 in Rev F), SW+ branches from the F1/S1 link, U1 under the bank, CHG named. SHEET 2: A1 V− return routed clear of U1 (it ran behind it in Rev F), ground bus ends at the A1 V− star, J4 below BT1 so nothing crosses, S2 drawn closed with a grey thermal link, hop where the D2 return crosses the C3 ground, U1 pins named. SHEET 3: phases U V W drawn to A1, hall supply named +5V_H / GND_H, J2 → A1 hall port, A1 UART and DS1 exchanged so +5V_RTN crosses nothing, C4 and C5 clear of R3 and R4, DS1 and J3 returns drawn, +3V3 net flags. SHEET 4 physical arrangement added. Parts lists: RGX-2-002 candidates named for S1, S2, F1 block, J4; L1 and C4 models; zones. Interface schedule: +5V_H/GND_H and U V W rows, +5V_RTN on sheet 3 only. Title blocks to REV G, 4 sheets.</td></tr>
+        <tr><td class="r">H</td><td class="z">2026-09-30</td><td>Legend gains the note-flag entry. SHEET 3: SPD leaves W1 to the right and the R5, R6, C6 group moves down, clear of J1 and W1; C5 labelled on its left. S2 voltage line ≥50 → ≥24 V DC per spec Rev F (RGX-2-002 open-contact analysis). Title blocks to REV H.</td></tr>
       </tbody>
     </table>
   </div>
