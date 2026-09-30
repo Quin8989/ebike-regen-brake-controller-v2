@@ -20,7 +20,7 @@ the regen current through a VESC motor controller.
 
 | Path | |
 |---|---|
-| `design/` | **Authoritative.** Spec RGX-2-001, drawing RGX-2-100 (HTML), BOM RGX-2-002 (parts, sources, inspection checks), firmware architecture RGX-2-003, planetary simulator (HTML) |
+| `design/` | **Authoritative.** Spec RGX-2-001, drawing RGX-2-100 (PDF, printed from its HTML source), BOM RGX-2-002 (parts, sources, inspection checks), firmware architecture RGX-2-003, planetary simulator (HTML) |
 | `firmware/` | MicroPython for the Pico (six files) and `deploy.sh`, which copies them to it |
 | `tests/` | Host tests, run through a model of the hub and the VESC |
 | `research/` | Decision log, component selection, carrier-brake study; `design/` wins where they differ |

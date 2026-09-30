@@ -79,6 +79,31 @@
   .tn { font-size:12px; }
   .tf { font-size:12px; font-weight:600; fill:var(--accent-ink); }
   .dash { stroke-dasharray:5 4; }
+
+  /* Print: A3 landscape, light, one sheet per page (RGX-2-100-schematic.pdf). */
+  @page { size:420mm 297mm; margin:10mm; }
+  @media print {
+    :root, :root[data-theme="dark"] {
+      --ground:#FFFFFF; --surface:#FFFFFF; --surface-2:#EAEDED;
+      --ink:#12161A; --ink-mid:#454D53; --ink-soft:#6B747A;
+      --rule:#D6DCDD; --accent:#A8481A; --accent-ink:#8C3B14;
+      --wire:#12161A; --wire-pwr:#A8481A; --wire-sig:#1D6E7A; --wire-gnd:#5A6167;
+      --sym:#FFFFFF; --border:#12161A;
+    }
+    body { margin:0; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    .wrap { display:block; max-width:none; padding:0; }
+    header { margin-bottom:4mm; }
+    section { display:block; break-before:page; }
+    header + section { break-before:auto; }
+    section:last-of-type { break-before:auto; margin-top:8mm; }
+    h2 { margin-bottom:3mm; }
+    .sheet { border:none; padding:0; overflow:visible; }
+    .sheet + h3 { break-before:page; margin-bottom:3mm; }
+    svg { min-width:0; width:360mm; height:auto; margin:0 auto; }
+    .scroller { overflow:visible; }
+    table { min-width:0; }
+    tr { break-inside:avoid; }
+  }
 </style>
 
 <div class="wrap">
