@@ -1,7 +1,7 @@
 # ReGenX v2 — Firmware Architecture
 
-**Document** RGX-2-003 **Rev E** · against RGX-2-001 Rev E / RGX-2-100 Rev F /
-RGX-2-002 Rev B · 2026-09-29
+**Document** RGX-2-003 **Rev E** · against RGX-2-001 Rev F / RGX-2-100 Rev H /
+RGX-2-002 Rev C · 2026-09-30
 
 Rev E describes the firmware as built in `firmware/`. Earlier revisions (the
 Rev B decision register, Rev C/D amendments) are in the git history; the

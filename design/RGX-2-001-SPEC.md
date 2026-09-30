@@ -1,7 +1,10 @@
 # ReGenX v2 — Design Specification
 
-**Document** RGX-2-001 Rev E · **Drawing** RGX-2-100 Rev F · 2026-09-29
+**Document** RGX-2-001 Rev F · **Drawing** RGX-2-100 Rev H · 2026-09-30
 
+Rev F: S2 voltage line ≥50 → ≥24 V DC (§7): the open contact sees at most
+23 V, the pack side of R1 (RGX-2-002 compatibility check). Drawing Rev H is
+drafting only (colour classes, models on the sheets, sheet 4 arrangement).
 Rev E: U2's ground lands on the GND pin of A1's UART connector, and the UART
 and BEC wires run as one twisted bundle (§8). J1 and W1 are M1's single Higo
 Z910 cable and its splitter (§7). §10 item 6 (VSYS logging) withdrawn.
@@ -430,7 +433,7 @@ No PRECHARGE state. No FAULT contactor state. No sleep state.
 | J4 | Connector, charge | 4S balance-charge input to BT1 BMS, upstream of F3 |
 | F3 | Fuse | 5 A time-delay, ≥32 V DC, **in accessible inline holder — removing F3 is the BT1 service disconnect**. 18 AWG branch. Duty 3.36 A / 90 s |
 | R1 | Resistor, power | 4.7 Ω ±5 %, **100 W** wirewound alu-clad. Heatsink ≥150 cm² or equivalent chassis area, 25 °C ambient. Duty 53 W / 22 s per cold start, 832 J |
-| S2 | Switch, thermal cutout | NC bimetal, open 100–110 °C, **manual reset**, ≥5 A, ≥50 V DC. Bonded to R1 body |
+| S2 | Switch, thermal cutout | NC bimetal, open 100–110 °C, **manual reset**, ≥5 A, ≥24 V DC (open-contact voltage ≤23 V). Bonded to R1 body |
 | D1 | Diode, rectifier | Si, I_F(AV) ≥ 6 A, V_RRM ≥ 100 V, I_R ≤ 10 µA @ 25 °C, V_F ≈ 1.0 V @ 3.4 A. 6A10 |
 | C1–C3 | Capacitor, EDLC module | 16.2 V, 20 F (6 × 2.7 V 120 F, integral balancing). Series 6.667 F, ESR 180–360 mΩ |
 | F1 | Fuse | 50 A Class T, 160 V DC (JJN-50) + block |
@@ -586,6 +589,7 @@ No entry below has been measured. Every dependent figure in §4 is provisional.
 | Bafang hall mapping compatible with VESC | yes | Commutation |
 | J3 operates at 3.3 V supply | yes | Throttle function |
 | SSD1306 daylight legibility | adequate | Usability |
+| M1 cable phase conductors and Z910 pins | unknown gauge and rating | 40 A peak phase current (28 A RMS) for events of a few seconds, assist and regen. Sellers rate Z910 extensions from 15 to 45 A |
 
 ### Measurement schedule
 
@@ -609,6 +613,9 @@ fail; run them first.
 9. G020 gear ratio by hand rotation count.
 10. A1 BEC voltage and current capability at connector.
 11. A1 telemetry round-trip latency at 115200.
+12. M1 cable phase conductor gauge and Z910 pin size, at the continuity map
+    (RGX-2-002 inspection item 1). Sets whether the 40 A motor-current limit
+    (§7 A1, RGX-2-003 §11 item 7) stands or the cable is the limit.
 
 ---
 
