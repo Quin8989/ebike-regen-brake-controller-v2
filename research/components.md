@@ -1,7 +1,7 @@
 # Components: motor and motor controller
 
 Why the Bafang G020 and the Flipsky Mini FSESC4.20, and the facts about them
-the design depends on. Selection dates and reasoning are in `decisions.md`.
+the design depends on.
 
 ---
 

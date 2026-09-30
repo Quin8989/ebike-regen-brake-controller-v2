@@ -4,8 +4,7 @@
 RGX-2-002 Rev C · 2026-09-30
 
 Rev E describes the firmware as built in `firmware/`. Earlier revisions (the
-Rev B decision register, Rev C/D amendments) are in the git history; the
-reasoning behind each change is in `research/decisions.md`.
+Rev B decision register, Rev C/D amendments) are in the git history.
 
 ## 1. Overview
 
