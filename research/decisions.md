@@ -14,6 +14,47 @@ Reversing a decision means adding a new entry, not editing an old one.
 
 ---
 
+## 2026-09-30 — Drawing Rev G: colour by class, models on the sheets, physical arrangement
+
+**Decided.** The owner asked for the schematic to be readable on GitHub and
+by someone new to the project.
+
+- **Colour = class on every sheet**, with the legend at top right and the
+  membership in sheet 1 NOTE 6: bank power (C1–C3, F1, S1, A1, the 8 AWG
+  loop), keep-alive (BT1, J4, F3, R1, S2, D1, F2, U1, D2), motor (M1, J1, W1,
+  J2), control (U2, DS1, J3, the small parts, +5V, +3V3), return. Symbols,
+  designators and wires all take the class colour; a junction dot marks where
+  classes meet (BANK+, SW+).
+- **Selected models and ratings are written at each part** (sheet 1 NOTE 7).
+  Parts with no model are generic or not yet chosen: S1, S2, F1 block, J4.
+- **Sheet 4, physical arrangement:** a side view of the bicycle with M1 at
+  the rear hub, the enclosure in the frame triangle, DS1, J3 and the
+  carrier-brake lever on the bar, cables by class, and three detail insets.
+  Arrangement only; mounting is not defined.
+- **Rev F errors found by the review and fixed:** sheet 1's UART ran to U1
+  instead of A1; sheet 2's A1 V− return ran behind U1's box, and J4's return
+  crossed BT1+ beside a junction; sheet 3 never drew the motor phases, J2's
+  destination, or the J3 and DS1 returns, and its hall supply shared the name
+  of the BEC +5V net (now +5V_H / GND_H). Also: S2 is drawn closed, as a
+  normally-closed contact; C4 and C5 sit clear of R3 and R4; +5V_RTN crosses
+  nothing; the ground bus ends at the A1 V− star; a hop marks the one crossing
+  that remains (the D2 return over the C3 ground).
+- **Sheet 1 states the operating principle** in two lines, since none of the
+  sheets did.
+- **The PDF is printed from the HTML** (`design/RGX-2-100-schematic.pdf`, A3
+  landscape, one sheet per page); the HTML stays the source.
+- **Reviewed in two rounds** by independent readings of the rendered sheets
+  with no other context: a comprehension test (could a newcomer trace the
+  circuits and place the parts?), a drafting check, and a cross-check of every
+  model and value against the parts lists and RGX-2-002. Round one returned
+  about sixty items, four of them blocking; round two confirmed the fixes.
+- **Left open, tracked in RGX-2-002:** the S2 candidate (KSD301) is rated
+  48 V DC against the spec's ≥50 V DC; the BOM relaxes the line to ≥24 V DC
+  on the open-contact analysis and queues it for the spec. The parts list
+  says so beside S2.
+
+---
+
 ## 2026-09-29 — Drawing Rev F, spec Rev E: Pico ground at A1's UART connector
 
 **Decided.** The owner left Rev F to judgement after the link-noise
